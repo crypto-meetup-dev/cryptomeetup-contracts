@@ -5,6 +5,10 @@
 
 #include "cryptomeetup.hpp"
 
+void  cryptomeetup::init() {
+    require_auth( _self );
+}
+
 void cryptomeetup::onTransfer(account_name &from, account_name &to, asset &eos, string &memo){
     if (to != _self) return;
     require_auth(from);
