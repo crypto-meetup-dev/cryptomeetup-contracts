@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "string_view": "cpp",
+        "*.tcc": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cwchar": "cpp",
+        "exception": "cpp",
+        "initializer_list": "cpp",
+        "iosfwd": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "type_traits": "cpp",
+        "typeinfo": "cpp",
+        "__split_buffer": "cpp",
+        "iterator": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "__bit_reference": "cpp",
+        "__functional_base": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "stdexcept": "cpp"
+    }
+}
