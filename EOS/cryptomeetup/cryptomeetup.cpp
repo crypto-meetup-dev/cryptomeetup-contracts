@@ -5,14 +5,44 @@
 
 #include "cryptomeetup.hpp"
 
-void cryptomeetup::onTransfer(account_name &from, account_name &to, asset &eos, string &memo){
+void cryptomeetup::buy(account_name from, extended_asset quantity, const vector<string>& params) {
+
+    eosio_assert(params.size() >= 2, "No ID found.");
+    auto id = string_to_price(params[1]);
+   
+
+    if (params.size() >= 3) {
+       auto ref = eosio::string_to_name(params[2].c_str());
+       if (is_account(ref) && ref != from) {   
+        /*        if (ref_b.amount > 0) {
+            action( // winner winner chicken dinner
+                permission_level{_self, N(active)},
+                N(eosio.token), N(transfer),
+                make_tuple(_self, ref, ref_b,
+                            std::string("ref bonus")))
+                .send();
+            }*/
+        }    
+    }
+}
+
+void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string& memo){
     if (to != _self) return;
     require_auth(from);
 
-    /*
-    eosio_assert(eos.is_valid(), "Invalid token transfer...");
+    eosio_assert(eos.is_valid(), "Invalid token transfer");
     eosio_assert(eos.symbol == EOS_SYMBOL, "only EOS token is allowed");
     eosio_assert(eos.amount > 0, "must buy a positive amount");
+    
+    auto params = split(memo, ' ');
+    eosio_assert(params.size() >= 1, "Error params");
+
+    if (params[0] == "buy") {
+        buy(from, quantity, params);
+        return;
+    }
+    
+    /*
     
     if (memo.substr(0, 3) == "buy") {   
 
