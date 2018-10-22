@@ -89,17 +89,6 @@ class cryptomeetup : public council {
         require_auth(_self);
     }
 
-    // @abi table global
-    struct st_global {       
-        uint64_t defer_id = 0;
-        checksum256 hash;
-        uint8_t dragon ;
-        uint8_t tiger ;
-        EOSLIB_SERIALIZE( st_global, (defer_id)(hash)(dragon)(tiger)) ;
-    };
-    typedef singleton<N(global), st_global> singleton_global;
-    singleton_global _global;        
-
     // @abi table bagsglobal
     struct bagsglobal {      
         uint64_t team;
