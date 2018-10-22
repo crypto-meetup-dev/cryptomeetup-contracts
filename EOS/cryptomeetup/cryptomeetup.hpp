@@ -16,6 +16,7 @@
 
 #include "config.hpp"
 #include "utils.hpp"
+#include "kyubey.hpp"
 // #include "eosio.token.hpp"
  
 typedef double real_type;
@@ -26,10 +27,14 @@ using eosio::asset;
 using eosio::symbol_type;
 using eosio::permission_level;
 using eosio::action;
+using eosio::extended_asset;
+using eosio::unpack_action_data;
+using eosio::currency;
 
 class cryptomeetup : public council {
     public: cryptomeetup(account_name self) :
         council(self),
+        _market(_self, _self),
         _land(_self, _self),
         _player(_self, _self){}
 
@@ -48,6 +53,12 @@ class cryptomeetup : public council {
     
     void onTransfer(account_name from, account_name to,
                     extended_asset quantity, string& memo); 
+
+    void newland(account_name &from, asset &eos);
+
+    void buy_land(account_name from, extended_asset in, const vector<string>& params);
+    void buy(account_name from, extended_asset in, const vector<string>& params);
+    void sell(account_name from, extended_asset in, const vector<string>& params);    
 
     void apply(account_name code, action_name action);
 
@@ -81,6 +92,9 @@ class cryptomeetup : public council {
 
     typedef eosio::multi_index<N(player), player> player_index;
     player_index _player;  
+
+    typedef eosio::multi_index<N(market), kyubey::market> market_index;
+    market_index _market;    
     
     /*
     // @abi action

@@ -28,7 +28,6 @@ class council : public eosio::contract {
         _proxies(_self, _self),
         _council(_self, _self){}
     
-    // @abi action
     void stake(account_name from) {
         auto itr = _voters.find(from);
         if (itr == _voters.end()) {
@@ -38,23 +37,19 @@ class council : public eosio::contract {
         }
     }
 
-    // @abi action
     void unstake(account_name from) {
 
     }    
 
-    // @abi action
     void vote(account_name from) {
 
     }
 
-    // @abi action
-    void run_for_proxy(account_name from) {
+    void runproxy(account_name from) {
 
     }    
 
-    // @abi action
-    void run_for_council(account_name from) {
+    void runcouncil(account_name from) {
 
     }        
 
