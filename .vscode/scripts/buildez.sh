@@ -1,1 +1,0 @@
-eosio-cpp $1.cpp -o $1.wasm
