@@ -28,9 +28,9 @@ CONTRACT council : public eosio::contract {
         // using contract::contract;
         council( name receiver, name code, datastream<const char*> ds ) :
             contract( receiver, code, ds ),
-            _voters( receiver, 1 ),
-            _proxies( receiver, 1 ),
-            _council( receiver, 1 ){}
+            _voters( receiver, uint64_t(eosio::name::raw(receiver)) ),
+            _proxies( receiver, uint64_t(eosio::name::raw(receiver)) ),
+            _council( receiver, uint64_t(eosio::name::raw(receiver)) ){}
     
     
     ACTION stake(account_name from) {

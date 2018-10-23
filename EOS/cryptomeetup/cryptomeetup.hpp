@@ -37,9 +37,9 @@ CONTRACT cryptomeetup : public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
         council( receiver, code, ds ),
-        _market( receiver, 1),
-        _land( receiver, 1),
-        _player( receiver, 1){}
+        _market( receiver, uint64_t(eosio::name::raw(receiver)) ),
+        _land( receiver, uint64_t(eosio::name::raw(receiver)) ),
+        _player( receiver, uint64_t(eosio::name::raw(receiver)) ){}
         
 
     ACTION init();
