@@ -1,6 +1,8 @@
-#ifndef _DFF_CONFIG_HPP
+#ifndef _CONFIG_HPP
 
-#define EOS_SYMBOL S(4, EOS)
-#define CMT_SYMBOL S(4, CMT)
+const auto CMT_SYMBOL = symbol( symbol_code("CMT"), 4 ) ;
+
+// #define TOKEN_CONTRACT N(dacincubator)
+// #define TOKEN_SYMBOL S(4, PLT)
 
 #endif

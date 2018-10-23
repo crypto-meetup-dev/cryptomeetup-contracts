@@ -15,13 +15,11 @@
 #include <eosiolib/transaction.hpp>
 
 #include <cmath>
-
-#define EOS_SYMBOL S(4, EOS)
-
+#include "utils.hpp"
 typedef double real_type;
 
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::symbol_code;
 using eosio::action;
 using eosio::permission_level;
 

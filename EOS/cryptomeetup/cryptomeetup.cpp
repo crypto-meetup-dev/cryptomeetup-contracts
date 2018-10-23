@@ -16,7 +16,7 @@ void cryptomeetup::init() {
         const uint64_t init_dummy_supply = 40000000ll * 10000ll;
         const uint64_t init_dummy_balance = 80000ll * 10000ll;
 
-        _market.emplace(_self, [&](auto &m) {
+        _market.emplace( get_self(), [&](auto &m) {
             m.supply.amount = init_dummy_supply;
             m.supply.symbol = CMT_SYMBOL;
             m.balance.amount = init_dummy_balance;
@@ -29,7 +29,7 @@ void cryptomeetup::init() {
 void cryptomeetup::newland(account_name &from, asset &eos) {
 //    require_auth(_self);
     for (int i=0;i<1;++i) {
-        _land.emplace(from, [&](auto &p) {
+        _land.emplace( name( from ), [&](auto &p) {
             p.id = _land.available_primary_key();
             p.owner = from;
             p.price = eos.amount;
@@ -39,29 +39,29 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
 
 void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<string>& params) {
 
-    eosio_assert(in.contract == N(eosio.token), "only true EOS token is allowed");
-    eosio_assert(in.symbol == EOS_SYMBOL, "only true EOS token is allowed");
+    eosio_assert(in.contract == "eosio.token"_n, "only true EOS token is allowed");
+    eosio_assert(in.quantity.symbol == EOS_SYMBOL, "only true EOS token is allowed");
    
     eosio_assert(params.size() >= 2, "No ID found.");
     auto id = string_to_price(params[1]);
 
     auto itr = _land.find(id);
     eosio_assert(itr != _land.end(), "no land exist");
-    eosio_assert(in.amount >= itr->next_price(), "no enough eos");
+    eosio_assert(in.quantity.amount >= itr->next_price(), "no enough eos");
 
-    auto delta = in.amount - itr->next_price();
+    auto delta = in.quantity.amount - itr->next_price();
     if (delta > 0) {
-        action( // winner winner chicken dinner
-            permission_level{_self, N(active)},
-            N(eosio.token), N(transfer),
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
             make_tuple(_self, from, asset(delta, EOS_SYMBOL),
                 std::string("refund"))
         ).send();        
     }
 
     action(
-        permission_level{_self, N(active)},
-        N(eosio.token), N(transfer),
+        permission_level{_self, "active"_n},
+        "eosio.token"_n, "transfer"_n,
         make_tuple(_self, itr->owner, itr->price,
             std::string("refund"))
     ).send();    
@@ -70,51 +70,51 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
     delta = itr->next_price() - itr->price;
     delta /= 2;
     asset out;
-    _market.modify(_market.begin(), 0, [&](auto &m) {
+    _market.modify(_market.begin(), get_self(), [&](auto &m) {
         out = m.buy(delta);
     }); 
     if (out.amount > 0){
         action(
-            permission_level{_self, N(active)},
-            N(dacincubator), N(transfer),
+            permission_level{_self, "active"_n},
+            "dacincubator"_n, "transfer"_n,
             make_tuple(_self, from, out, std::string("buy some new token"))
         ).send();    
     }    
 
-    _land.modify(itr, 0, [&](auto &t) {
+    _land.modify(itr, get_self(), [&](auto &t) {
         t.owner = from;
         t.price = itr->next_price();
     });    
    
     if (params.size() >= 3) {
-       auto ref = eosio::string_to_name(params[2].c_str());
-       if (is_account(ref) && ref != from) {   
+       auto ref = name(params[2].c_str() );
+       if (is_account(ref) && ref != name(from)) {} 
         /*  if (ref_b.amount > 0) {
             action( // winner winner chicken dinner
-                permission_level{_self, N(active)},
-                N(eosio.token), N(transfer),
+                permission_level{_self, "active"_n},
+                N(eosio.token), "transfer"_n,
                 make_tuple(_self, ref, ref_b,
                             std::string("ref bonus")))
                 .send();
             }*/
-        }    
+        //}    
     }
 }
 
 void cryptomeetup::buy(account_name from, extended_asset in, const vector<string>& params) {
 
-    eosio_assert(in.contract == N(eosio.token), "only true EOS token is allowed");
-    eosio_assert(in.symbol == EOS_SYMBOL, "only true EOS token is allowed");
-   
+    eosio_assert(in.contract == "eosio.token"_n, "only true EOS token is allowed");
+    eosio_assert(in.quantity.symbol == EOS_SYMBOL, "only true EOS token is allowed");
+
     asset out;
-    _market.modify(_market.begin(), 0, [&](auto &m) {
-        out = m.buy(in.amount);
+    _market.modify(_market.begin(), get_self(), [&](auto &m) {
+        out = m.buy(in.quantity.amount);
     }); 
 
     if (out.amount > 0){
         action(
-            permission_level{_self, N(active)},
-            N(dacincubator), N(transfer),
+            permission_level{_self, "active"_n},
+            "dacincubator"_n, "transfer"_n,
             make_tuple(_self, from, out, std::string("buy some new token"))
         ).send();    
     }    
@@ -132,8 +132,8 @@ void cryptomeetup::sell(account_name from, extended_asset quantity, const vector
        if (is_account(ref) && ref != from) {   
           if (ref_b.amount > 0) {
             action( // winner winner chicken dinner
-                permission_level{_self, N(active)},
-                N(eosio.token), N(transfer),
+                permission_level{_self, "active"_n},
+                N(eosio.token), "transfer"_n,
                 make_tuple(_self, ref, ref_b,
                             std::string("ref bonus")))
                 .send();
@@ -143,11 +143,12 @@ void cryptomeetup::sell(account_name from, extended_asset quantity, const vector
 }
 
 void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string& memo){
-    if (to != _self) return;
+    if ( name(to) != _self) return;
     require_auth(from);
 
-    eosio_assert(quantity.is_valid(), "Invalid token transfer");
-    eosio_assert(quantity.amount > 0, "must buy a positive amount");
+    eosio_assert(quantity.quantity.is_valid(), "Invalid token transfer");
+    // eosio_assert(quantity.get_extended_symbol() == extended_symbol(EOS_SYMBOL, name() ), "only EOS token is allowed");
+    eosio_assert(quantity.quantity.amount > 0, "must buy a positive amount");
     
     auto params = split(memo, ' ');
     eosio_assert(params.size() >= 1, "Error params");
@@ -194,8 +195,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
         if (d.amount > 0 && _self != from){
 
         action( // winner wi nner chicken dinner
-            permission_level{_self, N(active)},
-            TOKEN_CONTRACT, N(transfer),
+            permission_level{_self, "active"_n},
+            TOKEN_CONTRACT, "transfer"_n,
             make_tuple(_self, from, d,
                        std::string("refund")))
             .send();
@@ -212,8 +213,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
         {   
             if (ref_b.amount > 0) {
             action( // winner winner chicken dinner
-                permission_level{_self, N(active)},
-                N(eosio.token), N(transfer),
+                permission_level{_self, "active"_n},
+                N(eosio.token), "transfer"_n,
                 make_tuple(_self, ref, ref_b,
                            std::string("ref bonus")))
                 .send();
@@ -237,8 +238,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
 
     if(delta.amount > 0 &&  _self !=itr->owner){
         action( // winner winner chicken dinner
-            permission_level{_self, N(active)},
-            N(eosio.token), N(transfer),
+            permission_level{_self, "active"_n},
+            N(eosio.token), "transfer"_n,
             make_tuple(_self, itr->owner, delta,
                        std::string("next hodl")))
             .send();

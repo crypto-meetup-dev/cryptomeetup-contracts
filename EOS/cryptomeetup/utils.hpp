@@ -1,22 +1,30 @@
 #pragma once
+#include <eosiolib/symbol.hpp>
 #include <string>
 #include <vector>
 
 using namespace eosio;
 using namespace std;
 
+typedef capi_name account_name;
+typedef capi_name action_name;
+
+const auto EOS_SYMBOL = symbol( symbol_code("EOS"), 4 ) ;
+
+struct st_transfer {
+    account_name from;
+    account_name to;
+    asset        quantity;
+    string       memo;
+
+    EOSLIB_SERIALIZE( st_transfer, (from)(to)(quantity)(memo) )
+};
+
 struct account {
     asset    balance;
     uint64_t primary_key()const { return balance.amount; }
 };
-
-typedef eosio::multi_index<N(accounts), account> accounts;
-struct rec_reveal {
-    uint8_t dragon ;
-    uint8_t tiger ;
-    checksum256 server_hash;
-    checksum256 client_seed;
-};
+typedef eosio::multi_index<"accounts"_n, account> accounts_t;
 
 const vector<string> split(const string& s, const char& t) {
     string buff;
