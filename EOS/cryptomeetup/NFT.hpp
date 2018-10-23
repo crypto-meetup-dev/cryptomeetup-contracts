@@ -14,9 +14,10 @@
 typedef double real_type;
 
 using std::string;
-using eosio::symbol_name;
+using eosio::symbol_code;
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::extended_asset;
+using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
 

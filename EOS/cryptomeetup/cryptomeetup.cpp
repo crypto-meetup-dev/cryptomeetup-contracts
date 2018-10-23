@@ -17,8 +17,8 @@ void cryptomeetup::buy(account_name from, extended_asset quantity, const vector<
    
 
     if (params.size() >= 3) {
-       auto ref = eosio::string_to_name(params[2].c_str());
-       if (is_account(ref) && ref != from) {   
+       //auto ref = eosio::string_to_name(params[2].c_str());
+       //if (is_account(ref) && ref != from) {   
         /*        if (ref_b.amount > 0) {
             action( // winner winner chicken dinner
                 permission_level{_self, N(active)},
@@ -27,17 +27,17 @@ void cryptomeetup::buy(account_name from, extended_asset quantity, const vector<
                             std::string("ref bonus")))
                 .send();
             }*/
-        }    
+        //}    
     }
 }
 
 void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string& memo){
-    if (to != _self) return;
+    if ( name(to) != _self) return;
     require_auth(from);
 
-    eosio_assert(eos.is_valid(), "Invalid token transfer");
-    eosio_assert(eos.symbol == EOS_SYMBOL, "only EOS token is allowed");
-    eosio_assert(eos.amount > 0, "must buy a positive amount");
+    eosio_assert(quantity.quantity.is_valid(), "Invalid token transfer");
+    // eosio_assert(quantity.get_extended_symbol() == extended_symbol(EOS_SYMBOL, name() ), "only EOS token is allowed");
+    eosio_assert(quantity.quantity.amount > 0, "must buy a positive amount");
     
     auto params = split(memo, ' ');
     eosio_assert(params.size() >= 1, "Error params");

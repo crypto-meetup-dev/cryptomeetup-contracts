@@ -25,6 +25,7 @@
         "memory": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "system_error": "cpp"
     }
 }

@@ -1,47 +1,53 @@
 /**
  *  @dev minakokojima, yukiexe
+ *  env: EOSIO.CDT v1.3.2
  *  @copyright Andoromeda
  */
 #pragma once
 #include <eosiolib/asset.hpp>
-#include <eosiolib/currency.hpp>
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 
+#include "utils.hpp"
 #include "council.hpp"
 #include "NFT.hpp"
 // #include <cmath>
 // #include <string>
 
 #include "config.hpp"
-#include "utils.hpp"
+
 // #include "eosio.token.hpp"
  
 typedef double real_type;
 
+using namespace eosio ;
+
 using std::string;
-using eosio::symbol_name;
+using eosio::symbol_code;
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::extended_asset;
+using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
+using eosio::time_point_sec;
+using eosio::name ;
 
-class cryptomeetup : public council {
-    public: cryptomeetup(account_name self) :
-        council(self),
-        _land(_self, _self),
-        _player(_self, _self){}
+CONTRACT cryptomeetup : public council {
+    public:
+        cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
+        council( receiver, code, ds ),
+        _land( receiver, 1),
+        _player( receiver, 1){}
+        
 
-    // @abi action
-    void init();
-    // @abi action
-    void clear();     
-    // @abi action
-    void test();
+    ACTION init();
+    ACTION clear();
+    ACTION test();
 
-    // @abi action
-    void transfer(account_name   from,
+    ACTION buy(account_name from, extended_asset quantity, const vector<string>& params) ;
+
+    ACTION transfer(account_name   from,
                   account_name   to,
                   asset          quantity,
                   string         memo);
@@ -51,8 +57,8 @@ class cryptomeetup : public council {
 
     void apply(account_name code, action_name action);
 
-    // @abi table bag i64
-    struct land : public NFT::tradeable_token {
+    
+    TABLE land : public NFT::tradeable_token {
         uint64_t parent;
         void tax() {
         }
@@ -60,10 +66,9 @@ class cryptomeetup : public council {
             return price * 1.35;
         }
     };
-    
-    // @abi table player
-    struct player {
-        account_name  account;
+        
+    TABLE player {
+        capi_name  account;
         uint64_t land_profit;
         uint64_t ref_profit;
         uint64_t fee_profit;
@@ -71,16 +76,16 @@ class cryptomeetup : public council {
         uint64_t staked_income;
         uint64_t council_income;
 
-        uint64_t primary_key() const {return account;}        
+        auto primary_key() const {return account;}        
         void withdraw() {
         }
     };
         
-    typedef eosio::multi_index<N(land), land> land_index;
-    land_index _land;   
+    typedef eosio::multi_index<"land"_n, land> land_t;
+    land_t _land;   
 
-    typedef eosio::multi_index<N(player), player> player_index;
-    player_index _player;  
+    typedef eosio::multi_index<"player"_n, player> player_t;
+    player_t _player;  
     
     /*
     // @abi action
@@ -130,27 +135,29 @@ private:
     */
 };
 
-void cryptomeetup::apply(account_name code, action_name action) {   
+void cryptomeetup::apply(capi_name code, capi_name action) {   
     auto &thiscontract = *this;
-
-    if (action == N(transfer)) {
-        if (code == N(eosio.token)) {
-            auto transfer_data = unpack_action_data<currency::transfer>();
-            onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);
+    
+    if ( name(action) == "transfer"_n ) {
+        if ( name(code) == "eosio.token"_n ) {
+            auto transfer_data = eosio::unpack_action_data<st_transfer>();
+            onTransfer(transfer_data.from, transfer_data.to,
+                        extended_asset(transfer_data.quantity, name( code ) ),
+                        transfer_data.memo);
         }
         return;
     }
 
-    if (code != _self) return;
+    if (name(code) != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init));
+        // EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
     };
 }
 
 extern "C" {
     [[noreturn]] void apply(uint64_t receiver, uint64_t code, uint64_t action) 
     {
-        cryptomeetup p(receiver);
+        cryptomeetup p( name(receiver), name(code), datastream<const char*>(nullptr, 0) );
         p.apply(code, action);
         eosio_exit(0);
     }
