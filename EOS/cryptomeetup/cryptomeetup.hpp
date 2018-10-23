@@ -124,14 +124,6 @@ CONTRACT cryptomeetup : public council {
   void setslogan(account_name &from, uint64_t id,string memo);
   
 private:
-    const vector<int64_t> getBets(const string &s, const char &c) ;
-    auto getBeton( const vector<int64_t> &v );
-    const int64_t getTotalBets(const vector<int64_t> &v);
-
-    auto checkBets( const asset &eos, const string &memo,
-                vector<int64_t> &vbets, int64_t &totalBets  );                
-
-    auto getResult( const card &a,  const card &b ) ;
     */
 };
 

@@ -9,7 +9,7 @@ using namespace std;
 typedef capi_name account_name;
 typedef capi_name action_name;
 
-auto EOS_SYMBOL = eosio::symbol( std::string_view("EOS"), 4 ) ;
+const auto EOS_SYMBOL = symbol( symbol_code("EOS"), 4 ) ;
 
 struct st_transfer {
     account_name from;

@@ -6,7 +6,7 @@
 #include "cryptomeetup.hpp"
 
 
-void  cryptomeetup::init() {
+void cryptomeetup::init() {
     require_auth( _self );
 }
 

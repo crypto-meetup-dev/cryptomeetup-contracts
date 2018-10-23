@@ -9,15 +9,11 @@
 #include <eosiolib/transaction.hpp>
 #include "utils.hpp"
  
-#define TOKEN_CONTRACT N(dacincubator)
-#define TOKEN_SYMBOL S(4, PLT)
-
-
+// #define TOKEN_CONTRACT N(dacincubator)
+// #define TOKEN_SYMBOL S(4, PLT)
 
 
 typedef double real_type;
-typedef capi_name account_name;
-typedef capi_name action_name;
 
 using namespace eosio ;
 
@@ -35,10 +31,10 @@ CONTRACT council : public eosio::contract {
     public: 
         // using contract::contract;
         council( name receiver, name code, datastream<const char*> ds ) :
-        contract( receiver, code, ds ),
-        _voters( receiver, 1 ),
-        _proxies( receiver, 1 ),
-        _council( receiver, 1 ){}
+            contract( receiver, code, ds ),
+            _voters( receiver, 1 ),
+            _proxies( receiver, 1 ),
+            _council( receiver, 1 ){}
     
     
     ACTION stake(account_name from) {
@@ -74,7 +70,7 @@ CONTRACT council : public eosio::contract {
         uint64_t     staked = 0;
         time_point_sec  last_vote_time ; 
 
-        uint64_t primary_key()const { return owner; }
+        auto primary_key()const { return owner; }
     };       
 
     TABLE proxy_info {
@@ -84,7 +80,7 @@ CONTRACT council : public eosio::contract {
         uint64_t     delegated_staked = 0;
         time_point_sec  last_vote_time ; 
 
-        uint64_t primary_key()const { return owner; }
+        auto primary_key()const { return owner; }
     };
 
     TABLE council_info {
@@ -93,7 +89,7 @@ CONTRACT council : public eosio::contract {
         uint64_t     total_votes = 0;
         uint64_t     unpaid = 0;
 
-        uint64_t primary_key()const { return owner; }
+        auto primary_key()const { return owner; }
     };          
 
     typedef eosio::multi_index<"voters"_n,  voter_info>  voters_t;
