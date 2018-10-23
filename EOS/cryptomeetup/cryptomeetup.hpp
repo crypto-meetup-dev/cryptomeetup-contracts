@@ -16,7 +16,7 @@
 // #include <string>
 
 #include "config.hpp"
-
+#include "kyubey.hpp"
 // #include "eosio.token.hpp"
  
 typedef double real_type;
@@ -37,6 +37,7 @@ CONTRACT cryptomeetup : public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
         council( receiver, code, ds ),
+        _market( receiver, 1),
         _land( receiver, 1),
         _player( receiver, 1){}
         
@@ -44,9 +45,8 @@ CONTRACT cryptomeetup : public council {
     ACTION init();
     ACTION clear();
     ACTION test();
-
-    ACTION buy(account_name from, extended_asset quantity, const vector<string>& params) ;
-
+       
+ 
     ACTION transfer(account_name   from,
                   account_name   to,
                   asset          quantity,
@@ -55,6 +55,12 @@ CONTRACT cryptomeetup : public council {
     void onTransfer(account_name from, account_name to,
                     extended_asset quantity, string& memo); 
 
+    void newland(account_name &from, asset &eos);
+
+    ACTION buy_land(account_name from, extended_asset in, const vector<string>& params);
+    ACTION buy(account_name from, extended_asset in, const vector<string>& params);
+    ACTION sell(account_name from, extended_asset in, const vector<string>& params);    
+
     void apply(account_name code, action_name action);
 
     
@@ -62,9 +68,8 @@ CONTRACT cryptomeetup : public council {
         uint64_t parent;
         void tax() {
         }
-        uint64_t next_price() const {
-            return price * 1.35;
-        }
+        uint64_t next_price() const { return price * 1.35; }
+
     };
         
     TABLE player {
@@ -86,6 +91,9 @@ CONTRACT cryptomeetup : public council {
 
     typedef eosio::multi_index<"player"_n, player> player_t;
     player_t _player;  
+  
+    typedef eosio::multi_index<"market"_n, kyubey::market> market_t;
+    market_t _market;    
     
     /*
     // @abi action

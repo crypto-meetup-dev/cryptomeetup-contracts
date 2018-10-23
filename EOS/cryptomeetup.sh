@@ -1,54 +1,54 @@
 #cleos wallet unlock -n www --password PW5JDQJvz73w73eNEtthCRhLn9gieFki5uiZu1JZdjwMftVA3f4cG
 
 cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
-#/usr/local/eosio/bin/eosiocpp -g cryptomeetup/cryptomeetup.abi  cryptomeetup/cryptomeetup.cpp
+/usr/local/eosio/bin/eosiocpp -g cryptomeetup/cryptomeetup.abi  cryptomeetup/cryptomeetup.cpp
 /usr/local/eosio/bin/eosiocpp -o cryptomeetup/cryptomeetup.wast cryptomeetup/cryptomeetup.cpp
 
 #cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "knowncarried", "360.2802 EOS", "" ]' -p minakokojima@active
 
-# push action eosio.token transfer '[ "eosotcbackup", "crazytown.bp", "0.0330 EOS", "buy 0" ]' -p eosotcbackup@active
+# push action eosio.token transfer '[ "eosotcbackup", "cryptomeetup", "0.0330 EOS", "buy 0" ]' -p eosotcbackup@active
 
-#cleos -u http://api.eosbeijing.one push action crazytown.bp newbag '[ "minakokojima", "0.0100 EOS" ]' -p crazytown.bp@active minakokojima@active
-
-
-#cleos -u http://api.eosbeijing.one push action crazytown.bp newbag '[ "crazytown.bp", "0.0100 EOS" ]' -p crazytown.bp@active crazytown.bp@active
-
-#cleos -u http://api.eosbeijing.one set contract crazytown.bp cryptomeetup -p crazytown.bp@active
-
-#cleos -u http://api.eosbeijing.one get table crazytown.bp crazytown.bp bag
-#cleos -u http://api.eosbeijing.one get table crazytown.bp crazytown.bp bagsglobal
-
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp init '[]' -p crazytown.bp@active
+#cleos -u http://api.eosbeijing.one push action cryptomeetup newbag '[ "minakokojima", "0.0100 EOS" ]' -p cryptomeetup@active minakokojima@active
 
 
-#cleos -u http://api.eosbeijing.one push action crazytown.bp init '["0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737"]' -p crazytown.bp@active
+#cleos -u http://api.eosbeijing.one push action cryptomeetup newbag '[ "cryptomeetup", "0.0100 EOS" ]' -p cryptomeetup@active cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp reveal '["0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737","0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737"]' -p crazytown.bp@active
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp reveal '["7a2dee663b23200c63fe195f76c9cb0f255ff623e578134060dd3fbc9dfd06a2","7f86a67f22e04c1ff4a21ade119ec95f8e618b06588b160ee68035544eb40014"]' -p crazytown.bp@active
-#cleos -u https://api.franceos.fr:443 push action crazytown.bp reveal '["7a2dee663b23200c63fe195f76c9cb0f255ff623e578134060dd3fbc9dfd06a2","7f86a67f22e04c1ff4a21ade119ec95f8e618b06588b160ee68035544eb40014"]' -p crazytown.bp@active
+#cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
+
+#cleos -u http://api.eosbeijing.one get table cryptomeetup cryptomeetup bag
+#cleos -u http://api.eosbeijing.one get table cryptomeetup cryptomeetup bagsglobal
+
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup init '[]' -p cryptomeetup@active
 
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp clear '[]' -p crazytown.bp@active
+#cleos -u http://api.eosbeijing.one push action cryptomeetup init '["0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737"]' -p cryptomeetup@active
+
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup reveal '["0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737","0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737"]' -p cryptomeetup@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup reveal '["7a2dee663b23200c63fe195f76c9cb0f255ff623e578134060dd3fbc9dfd06a2","7f86a67f22e04c1ff4a21ade119ec95f8e618b06588b160ee68035544eb40014"]' -p cryptomeetup@active
+#cleos -u https://api.franceos.fr:443 push action cryptomeetup reveal '["7a2dee663b23200c63fe195f76c9cb0f255ff623e578134060dd3fbc9dfd06a2","7f86a67f22e04c1ff4a21ade119ec95f8e618b06588b160ee68035544eb40014"]' -p cryptomeetup@active
+
+
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup clear '[]' -p cryptomeetup@active
  
 #https://api.franceos.fr:443
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp setwhitelist '["PXL", "dacincubator"]' -p crazytown.bp@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup setwhitelist '["PXL", "dacincubator"]' -p cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp rmwhitelist '["PXL"]' -p crazytown.bp@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup rmwhitelist '["PXL"]' -p cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "crazytown.bp", "0.0010 EOS", "0.0010 PXL" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0010 EOS", "0.0010 PXL" ]' -p minakokojima@active
 
-#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "eosotcbackup", "crazytown.bp", "0.0010 PXL", "0.0010 EOS" ]' -p eosotcbackup@active
+#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "eosotcbackup", "cryptomeetup", "0.0010 PXL", "0.0010 EOS" ]' -p eosotcbackup@active
 
-#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "crazytown.bp", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
 
-#cleos -u http://api-direct.eosasia.one get table crazytown.bp crazytown.bp global
+#cleos -u http://api-direct.eosasia.one get table cryptomeetup cryptomeetup global
 
-#cleos -u http://api-direct.eosasia.one get table crazytown.bp crazytown.bp player
+#cleos -u http://api-direct.eosasia.one get table cryptomeetup cryptomeetup player
 
-#cleos -u https://geo.eosasia.one get table crazytown.bp crazytown.bp player
+#cleos -u https://geo.eosasia.one get table cryptomeetup cryptomeetup player
 
-#cleos -u http://api-direct.eosasia.one get table crazytown.bp crazytown.bp bags
+#cleos -u http://api-direct.eosasia.one get table cryptomeetup cryptomeetup bags
 
 #cleos -u http://api-direct.eosasia.one get table -l 65536 eosotcbackup eosio.token order
 
@@ -79,23 +79,23 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 #
 #cleos -u http://api-direct.eosasia.one set contract kyubeydex.bp pomelo -p kyubeydex.bp@active
 
-#cleos -u http://api-direct.eosasia.one set contract crazytown.bp cryptomeetup -p crazytown.bp@active
+#cleos -u http://api-direct.eosasia.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp clear '' -p crazytown.bp@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup clear '' -p cryptomeetup@active
 
 #
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp setslogan '[ "minakokojima", "0", "EOS Asia" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup setslogan '[ "minakokojima", "0", "EOS Asia" ]' -p minakokojima@active
 
 
 #cleos -u http://api-direct.eosasia.one push action kyubeydex.bp setwhitelist '["PXL", "dacincubator"]' -p kyubeydex.bp@active
 
-#cleos -u http://api-direct.eosasia.one push action crazytown.bp rmwhitelist '["PXL"]' -p crazytown.bp@active
+#cleos -u http://api-direct.eosasia.one push action cryptomeetup rmwhitelist '["PXL"]' -p cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "crazytown.bp", "0.0010 EOS", "0.0010 PXL" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0010 EOS", "0.0010 PXL" ]' -p minakokojima@active
 
-#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "eosotcbackup", "crazytown.bp", "0.0010 PXL", "0.0010 EOS" ]' -p eosotcbackup@active
+#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "eosotcbackup", "cryptomeetup", "0.0010 PXL", "0.0010 EOS" ]' -p eosotcbackup@active
 
-#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "crazytown.bp", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
 
 
 #
@@ -106,7 +106,7 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 
 
 
-#crazytown.bp PXL whitelist
+#cryptomeetup PXL whitelist
 
 
 #cleos -u http://api-direct.eosasia.one get table dacincubator dacincubator accounts
@@ -116,7 +116,7 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 #
 
 
-#cleos -u http://api-direct.eosasia.one get table crazytown.bp crazytown.bp buyorder
+#cleos -u http://api-direct.eosasia.one get table cryptomeetup cryptomeetup buyorder
 
 #cleos -u http://api-direct.eosasia.one get table tokendapppub PUB games
 

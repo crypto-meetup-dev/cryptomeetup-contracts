@@ -9,10 +9,6 @@
 #include <eosiolib/transaction.hpp>
 #include "utils.hpp"
  
-// #define TOKEN_CONTRACT N(dacincubator)
-// #define TOKEN_SYMBOL S(4, PLT)
-
-
 typedef double real_type;
 
 using namespace eosio ;
