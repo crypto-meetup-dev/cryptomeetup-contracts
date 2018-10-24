@@ -28,17 +28,24 @@ class council : public eosio::contract {
         _proxies(_self, _self),
         _council(_self, _self){}
     
-    void stake(account_name from) {
+    void stake(account_name from, uint64_t delta) {
         auto itr = _voters.find(from);
-        if (itr == _voters.end()) {
-            
-        } else {
-
+        if (itr == _voters.end()) {    
+            _voters.emplace(_self, [&](auto &v) {
+                v.owner = from;
+                v.staked += delta;
+                v.last_vote_time = now();
+            });
+        } else {  
+            _voters.modify(itr, 0, [&](auto &v) {
+                v.staked += delta;
+                v.last_vote_time = now();
+            });
         }
     }
 
     void unstake(account_name from) {
-
+        
     }    
 
     void vote(account_name from) {

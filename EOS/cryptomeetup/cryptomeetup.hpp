@@ -34,6 +34,7 @@ using eosio::currency;
 class cryptomeetup : public council {
     public: cryptomeetup(account_name self) :
         council(self),
+        _global(_self, _self),
         _market(_self, _self),
         _land(_self, _self),
         _player(_self, _self){}
@@ -54,6 +55,7 @@ class cryptomeetup : public council {
     void onTransfer(account_name from, account_name to,
                     extended_asset quantity, string& memo); 
 
+    // @abi action
     void newland(account_name &from, asset &eos);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
@@ -62,7 +64,20 @@ class cryptomeetup : public council {
 
     void apply(account_name code, action_name action);
 
-    // @abi table bag i64
+    // @abi table land
+    struct land {
+        uint64_t     id;
+        account_name owner = 0;
+        uint64_t primary_key()const { return id; }        
+        uint64_t price;           
+        uint64_t parent;
+        void tax() {
+        }
+        uint64_t next_price() const {
+            return price * 1.35;
+        }
+    };    
+    /*
     struct land : public NFT::tradeable_token {
         uint64_t parent;
         void tax() {
@@ -70,7 +85,7 @@ class cryptomeetup : public council {
         uint64_t next_price() const {
             return price * 1.35;
         }
-    };
+    };*/
     
     // @abi table player
     struct player {
@@ -87,6 +102,14 @@ class cryptomeetup : public council {
         }
     };
         
+    // @abi table global
+    struct global {       
+        uint64_t team;
+        uint64_t pool;
+        account_name last;
+        time st, ed;
+    };
+
     typedef eosio::multi_index<N(land), land> land_index;
     land_index _land;   
 
@@ -95,33 +118,15 @@ class cryptomeetup : public council {
 
     typedef eosio::multi_index<N(market), kyubey::market> market_index;
     market_index _market;    
+
+    typedef singleton<N(global), global> singleton_global;
+    singleton_global _global;       
     
     /*
     // @abi action
     void receipt(const rec_reveal& reveal) {
         require_auth(_self);
     }
-
-    // @abi table global
-    struct st_global {       
-        uint64_t defer_id = 0;
-        checksum256 hash;
-        uint8_t dragon ;
-        uint8_t tiger ;
-        EOSLIB_SERIALIZE( st_global, (defer_id)(hash)(dragon)(tiger)) ;
-    };
-    typedef singleton<N(global), st_global> singleton_global;
-    singleton_global _global;        
-
-    // @abi table bagsglobal
-    struct bagsglobal {      
-        uint64_t team;
-        uint64_t pool;
-        account_name last;
-        time st, ed;
-    };
-    typedef singleton<N(bagsglobal), bagsglobal> singleton_bagsglobal;
-    singleton_bagsglobal _bagsglobal;   
 
     uint64_t get_next_defer_id() {
     auto g = _global.get();    
@@ -168,7 +173,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init));
+        EOSIO_API(cryptomeetup, (init)(newland));
     };
 }
 
