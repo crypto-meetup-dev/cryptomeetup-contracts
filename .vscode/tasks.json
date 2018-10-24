@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "reveal": "always",
+    "options": {
+        "cwd": "${workspaceFolder}/EOS/${fileBasenameNoExtension}/"
+    },
+    "tasks": [
+        {
+            "label": "CMake",
+            "type": "shell",
+            "command": "sh ${workspaceFolder}/.vscode/scripts/compile.sh"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "sh ${workspaceFolder}/.vscode/scripts/build.sh"
+        },
+        {
+            "label": "Generate ABI",
+            "type": "shell",
+            "command": "sh ./.vscode/scripts/generate.sh ${fileBasenameNoExtension}",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build by eosio-cpp ",
+            "type": "shell",
+            "command": "eosio-cpp",
+            "args": ["${fileBasenameNoExtension}.cpp", "-o", "${fileBasenameNoExtension}.wasm"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
