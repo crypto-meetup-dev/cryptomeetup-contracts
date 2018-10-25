@@ -39,18 +39,6 @@ class council : public eosio::contract {
         require_auth(from);
         eosio_assert(delta == 0, "must stake a positive amount");
 
-
-        // warning!!!
-        // 玩家将CMU转到本合约质押
-        action(
-            permission_level{_self, N(active)},
-            N(dacincubator), N(transfer),
-            make_tuple(from, _self, asset(delta, CMU_SYMBOL),
-            std::string("transfer ownership"))
-        ).send(); 
-        // warning!!!
-
-
         auto itr = _voters.find(from);
         if (itr == _voters.end()) {    
             _voters.emplace(_self, [&](auto &v) {
@@ -65,7 +53,10 @@ class council : public eosio::contract {
     }
 
     void unstake(account_name from) {
+        
         require_auth(from);
+
+        /*
 
         auto itr = _voters.find(from);
         eosio_assert(itr == _voters.end(), "this account didn't stake");
@@ -110,15 +101,49 @@ class council : public eosio::contract {
         // warning!!!
         // 打出对应event, 让前端知道
         // warning!!! 
+        */
     }    
 
-    void vote(account_name from, account_name councilAccount) {
+    void unvote(account_name from) {
         require_auth(from);
-        auto itr_council = _council.find(councilAccount);
-        eosio_assert(itr_council == _council.end(), "can't find this council");
+        
+        auto v = _voters.find(from);
+        if (v != _voters.end()) {
+            return;
+        }
+        auto p = _proxies.find(from);
+        if (p != _proxies.end()) {
+            return;
+        }
+    }
 
+    void vote(account_name from, account_name to) {
+        
+        require_auth(from);
+        unvote(from);
+
+        auto v = _voters.find(from);
+        if (v != _voters.end()) {
+            auto c = _council.find(to);
+            if (c != _council.end()) {
+                
+            } else {
+                auto p = _proxies.find(to);
+                if (p != _proxies.end()) {
+
+                }
+            }
+            return;
+        }
+
+        auto p = _proxies.find(from);
+        if (p != _proxies.end()) {
+            return;
+        }
+
+        /*
         auto itr = _voters.find(from);
-        if(itr == _voters.end()) { // 此时from是代理账户投票
+        if (itr == _voters.end()) { // 此时from是代理账户投票
             auto itr_proxy = _proxies.find(from);
             eosio_assert(itr_proxy == _proxies.end(), "can't find this account in voter and proxy");
 
@@ -154,11 +179,12 @@ class council : public eosio::contract {
             // warning!!!
             // 打出对应event, 让前端知道
             // warning!!!
-        }
+        }        */
     }
 
     // 申明自己参与代理
     void runproxy(account_name from) {
+        /*
         require_auth(from);
 
         // warning!!!
@@ -194,12 +220,14 @@ class council : public eosio::contract {
         // warning!!!
         // 打出event, 让前端知道
         // warning!!!
+        */
     }
 
     // unstake 72小时后可以取回token
     void getToken(account_name from) {
-        require_auth( owner );
-
+        require_auth(from);        
+        auto itr = _voters.find(from);
+        eosio_assert(itr == _voters.end(), "this account didn't stake");        
    }
 
 

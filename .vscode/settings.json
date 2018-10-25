@@ -8,6 +8,7 @@
         "utility": "cpp",
         "vector": "cpp",
         "tuple": "cpp",
-        "__functional_base": "cpp"
+        "__functional_base": "cpp",
+        "iosfwd": "cpp"
     }
 }
