@@ -122,11 +122,13 @@ void cryptomeetup::buy(account_name from, extended_asset in, const vector<string
     }); 
 
     if (out.amount > 0){
+        /*
         action(
             permission_level{_self, N(active)},
             N(dacincubator), N(transfer),
             make_tuple(_self, from, out, std::string("buy some new token"))
         ).send();    
+        */
     }    
 }
 
@@ -174,6 +176,13 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
 
     if (params[0] == "sell") {
         sell(from, quantity, params);
+        return;
+    }
+
+    if (params[0] == "stake") {
+        eosio_assert(quantity.contract == N(dacincubator), "must use CMU to stake");
+        eosio_assert(quantity.symbol == S(4, "CMU"), "must use CMU to stake");
+        stake(from, quantity.amount);
         return;
     }
     
