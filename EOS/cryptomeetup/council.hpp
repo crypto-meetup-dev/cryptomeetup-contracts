@@ -35,9 +35,6 @@ class council : public eosio::contract {
         _proxies(_self, _self),
         _council(_self, _self){}
 
-
-
-
     // @abi table voter_table
     struct voter_info {
         account_name owner = 0;
@@ -50,7 +47,6 @@ class council : public eosio::contract {
     struct proxy_info {
         account_name owner = 0;
         account_name to = 0;
-        uint64_t     staked = 0;
         uint64_t     delegated_staked = 0;
         uint64_t primary_key()const { return owner; }
     };
@@ -71,83 +67,44 @@ class council : public eosio::contract {
     voters_table _voters;
     proxies_table _proxies;
     council_table _council;
-
     
     void stake(account_name from, uint64_t delta) {
         require_auth(from);
         eosio_assert(delta == 0, "must stake a positive amount");
 
         auto itr = _voters.find(from);
-        if (itr == _voters.end()) {    
-            _voters.emplace(_self, [&](auto &v) {
-                v.owner = from;
-                v.staked += delta;
-            });
-        } else {  
+        if (itr != _voters.end()) {    
+            // voter already exist, update the staked information.
             unvote(itr);
             _voters.modify(itr, 0, [&](auto &v) {
                 v.staked += delta;
             });
-            vote(itr);
+            vote(itr); 
+        } else {
+            // new voter.    
+            _voters.emplace(_self, [&](auto &v) {
+                v.owner = from;
+                v.staked += delta;
+            });
         }
     }
 
     void unstake(account_name from) {
-        require_auth(from);    
-        /*
-
+        require_auth(from);
         auto itr = _voters.find(from);
-        eosio_assert(itr == _voters.end(), "this account didn't stake");
-        eosio_assert(itr->unstakeTime != 0, "this account already unstake");
-
-
-        account_name proxy_temp = itr->proxy;
-        if (proxy_temp != 0) { // 普通人委托代理投票情形
-            eosio_assert(itr -> council != 0, "council should be 0"); // 如果设置了代理，那么就必须不要设置自己的token投给谁
-            
-            auto itr_proxy = _proxies.find(proxy_temp);
-            eosio_assert(itr_proxy == _proxies.end(), "proxy don't exist"); // 这个情况应该不会出现，出现了表示合约的_proxies table维护出了问题
-            
-            _proxies.modify(itr_proxy, 0, [&](auto &p) {
-                p.voted -= itr->voted;
-            });
-
-            auto itr_council = _council.find(itr_proxy->council);
-            eosio_assert(itr_council == _council.end(), "council don't exist"); // 这个情况应该不会出现，出现了表示合约的_proxies table维护出了问题
-
-            _council.modify(itr_council, 0, [&](auto &c) {
-                c.total_votes -= itr->voted;
-            });
-
-        } else {    // 普通人自己投票或者代理人投票情形
-            eosio_assert(itr -> council == 0, "council should not be 0"); // 如果没有设置了代理，那么就必须要设置自己的token投给谁
-            
-            auto itr_council_2 = _council.find(itr->council);
-            eosio_assert(itr_council_2 == _council.end(), "council don't exist"); // 这个情况应该不会出现，出现了表示合约的_proxies table维护出了问题
-            
-            _council.modify(itr_council_2, 0, [&](auto &c) {
-                c.total_votes -= itr->voted;
-            });
-
-        }
-
+        eosio_assert(itr != _voters.end(), "voter doesn't exist");
+        unvote(itr); 
         _voters.modify(itr, 0, [&](auto &v) {
-            v.unstakeTime = now();
-            v.voted = 0;
+            v.staked = 0;
         });
-
-        // warning!!!
-        // 打出对应event, 让前端知道
-        // warning!!! 
-        */
+        // todo(minakokojima): add unstake event.
     }    
 
     void unvote(voters_table::const_iterator itr) {
         auto p = _proxies.find(itr->to);
         if (p != _proxies.end()) { 
-            auto t = itr->staked;
             _proxies.modify(p, 0, [&](auto &pp) {
-                pp.delegated_staked -= t;
+                pp.delegated_staked -= itr->staked;
             });
             auto c = _council.find(p->to);
             if (c != _council.end()) {                 
@@ -163,15 +120,20 @@ class council : public eosio::contract {
                 cc.total_votes -= itr->staked;
             });
         }
+        _voters.modify(itr, 0, [&](auto &v) {
+
+        });
     }
 
     void unvote(proxies_table::const_iterator itr) {
+        /*
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
             _council.modify(c, 0, [&](auto &cc) {
-                cc.total_votes -= itr->staked;
+                cc.total_votes -= itr->delegated_staked;
             });
         }
+        */
     }
 
     void unvote(account_name from) {
@@ -188,57 +150,42 @@ class council : public eosio::contract {
         }
     }
 
-    void votev2p(account_name, account_name to) {
-
-    }
-    void votev2c(account_name, account_name to) {
-
-    }
-    void votep2c(account_name, account_name to) {
-
-    }
-
     void vote(voters_table::const_iterator itr) {
+        unvote(itr);
         auto p = _proxies.find(itr->to);
-        if (p != _proxies.end()) { 
-            /*
+        if (p != _proxies.end()) {             
             _proxies.modify(p, 0, [&](auto &pp) {
                 pp.delegated_staked += itr->staked;
             });
-            */
-            /*
             auto c = _council.find(p->to);
             if (c != _council.end()) { 
                 _council.modify(c, 0, [&](auto &cc) {
                     cc.total_votes += itr->staked;
                 });            
-            }*/
+            }
             return;
         }        
         auto c = _council.find(itr->to);
-        if (c != _council.end()) { 
-            /*
+        if (c != _council.end()) {             
             _council.modify(c, 0, [&](auto &cc) {
                 cc.total_votes += itr->staked;
-            });  */
+            });
             return;          
         }
     }
 
-    void vote(proxies_table::const_iterator itr) {        
+    void vote(proxies_table::const_iterator itr) {   
+        unvote(itr);     
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
             _council.modify(c, 0, [&](auto &cc) {
-                cc.total_votes += itr->staked;
+                cc.total_votes += itr->delegated_staked;
             });
         }
     }    
 
-    void vote(account_name from, account_name to) {
-        
+    void vote(account_name from, account_name to) {        
         require_auth(from);
-        unvote(from);
-
         auto v = _voters.find(from);
         if (v != _voters.end()) {                   
             _voters.modify(v, 0, [&](auto &vv) {
@@ -256,46 +203,6 @@ class council : public eosio::contract {
             vote(v);
             return;
         }
-
-        /*
-        auto itr = _voters.find(from);
-        if (itr == _voters.end()) { // 此时from是代理账户投票
-            auto itr_proxy = _proxies.find(from);
-            eosio_assert(itr_proxy == _proxies.end(), "can't find this account in voter and proxy");
-
-            eosio_assert(itr_proxy->council == councilAccount, "already vote to this account");
-
-            _proxies.modify(itr_proxy, 0, [&](auto &p) {
-                p.council = councilAccount;
-                p.voted = p.staked + p.delegated_staked;
-            });
-
-            _council.modify(itr_council, 0, [&](auto &c) {
-                c.total_votes += itr_proxy->voted;
-            });
-
-            // warning!!!
-            // 打出对应event, 让前端知道
-            // warning!!!
-
-        } else { // 此时是玩家自己投票
-            eosio_assert(itr->proxy != 0, "proxy account can't  vote");
-            eosio.assert(itr->council == councilAccount, "already vote to this account");
-
-            _voters.modify(itr, 0, [&](auto &v) {
-                v.council = councilAccount;
-                v.voted = v.staked;
-            });
-
-            _council.modify(itr_council, 0, [&](auto &c) {
-                c.total_votes += itr->voted;
-            });
-
-
-            // warning!!!
-            // 打出对应event, 让前端知道
-            // warning!!!
-        }        */
     }
 
     // 申明自己参与代理
