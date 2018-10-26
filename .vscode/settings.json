@@ -9,6 +9,9 @@
         "vector": "cpp",
         "tuple": "cpp",
         "__functional_base": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "__bit_reference": "cpp",
+        "__string": "cpp",
+        "algorithm": "cpp"
     }
 }
