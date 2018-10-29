@@ -9,36 +9,33 @@
 #include <eosiolib/transaction.hpp>
  
 #define TOKEN_CONTRACT N(dacincubator)
+#define TOKEN_SYMBOL S(4, PLT)
 
 typedef double real_type;
+typedef uint8_t card ;
 
 using std::string;
-using eosio::symbol_code;
+using eosio::symbol_name;
 using eosio::asset;
-using eosio::extended_asset;
-using eosio::symbol_code;
+using eosio::symbol_type;
 using eosio::permission_level;
 using eosio::action;
 
-namespace NFT {
+namespace meetup {
     
-    void create(account_name from) {
+    void create(account_name from, string& memo) {
     }
 
-    void transfer(account_name from, account_name to) {
-    }
 
-    void buy(account_name from) {
-        
-    }
 
-    struct token {
-        uint64_t     id;
-        account_name owner = 0;
+    struct meetup {
+        uint64_t id;
+        uint64_t staked; 
+        uint64_t parent;       
+        string name;
+        string hyperlink;      
+        account_name owner;
+        time st, ed;        
         uint64_t primary_key()const { return id; }
-    };    
-
-    struct tradeable_token : public token {
-        uint64_t price;        
     };
 };

@@ -13,14 +13,10 @@
 #include "council.hpp"
 #include "NFT.hpp"
 // #include <cmath>
-// #include <string>
 
 #include "config.hpp"
 #include "kyubey.hpp"
-// #include "eosio.token.hpp"
  
-typedef double real_type;
-
 using namespace eosio ;
 
 using std::string;
@@ -37,6 +33,7 @@ CONTRACT cryptomeetup : public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
         council( receiver, code, ds ),
+        _global( receiver, uint64_t(eosio::name::raw(receiver)) ),
         _market( receiver, uint64_t(eosio::name::raw(receiver)) ),
         _land( receiver, uint64_t(eosio::name::raw(receiver)) ),
         _player( receiver, uint64_t(eosio::name::raw(receiver)) ){}
@@ -45,7 +42,6 @@ CONTRACT cryptomeetup : public council {
     ACTION init();
     ACTION clear();
     ACTION test();
-       
  
     ACTION transfer(account_name   from,
                   account_name   to,
@@ -55,7 +51,8 @@ CONTRACT cryptomeetup : public council {
     void onTransfer(account_name from, account_name to,
                     extended_asset quantity, string& memo); 
 
-    void newland(account_name &from, asset &eos);
+    
+    ACTION newland(account_name &from, asset &eos);
 
     ACTION buy_land(account_name from, extended_asset in, const vector<string>& params);
     ACTION buy(account_name from, extended_asset in, const vector<string>& params);
@@ -63,15 +60,29 @@ CONTRACT cryptomeetup : public council {
 
     void apply(account_name code, action_name action);
 
-    
-    TABLE land : public NFT::tradeable_token {
+    TABLE land {
+        uint64_t     id;
+        account_name owner = 0;
+        uint64_t primary_key()const { return id; }        
+        uint64_t price;           
         uint64_t parent;
         void tax() {
         }
-        uint64_t next_price() const { return price * 1.35; }
-
-    };
-        
+        uint64_t next_price() const {
+            return price * 1.35;
+        }
+    };    
+    /*
+    struct land : public NFT::tradeable_token {
+        uint64_t parent;
+        void tax() {
+        }
+        uint64_t next_price() const {
+            return price * 1.35;
+        }
+    };*/
+    
+         
     TABLE player {
         capi_name  account;
         uint64_t land_profit;
@@ -86,6 +97,15 @@ CONTRACT cryptomeetup : public council {
         }
     };
         
+    TABLE global {       
+        uint64_t team;
+        uint64_t pool;
+        account_name last;
+        // time st, ed;
+    };
+
+    typedef singleton<"global"_n, global> singleton_global;
+    singleton_global _global;       
     typedef eosio::multi_index<"land"_n, land> land_t;
     land_t _land;   
 
@@ -125,9 +145,7 @@ CONTRACT cryptomeetup : public council {
         trx.send(get_next_defer_id(), _self, false);
     }
 
-  // @abi action
-  void newbag(account_name &from, asset &eos);
-
+  
   // @abi action
   void setslogan(account_name &from, uint64_t id,string memo);
   
@@ -150,6 +168,7 @@ void cryptomeetup::apply(capi_name code, capi_name action) {
 
     if (name(code) != _self) return;
     switch (action) {
+        // old: EOSIO_API(cryptomeetup, (init)(newland));
         // EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
     };
 }
