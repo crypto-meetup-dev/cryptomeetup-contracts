@@ -18,8 +18,8 @@
         {
             "label": "Generate ABI",
             "type": "shell",
-            "command": "sh ./.vscode/scripts/generate.sh ${fileBasenameNoExtension}",
-            "problemMatcher": []
+            "command": "eosio-abigen",
+            "args": ["${fileBasenameNoExtension}.cpp", "--contract=${fileBasenameNoExtension}","--output=${fileBasenameNoExtension}.abi"]
         },
         {
             "label": "Build by eosio-cpp ",
