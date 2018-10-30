@@ -1,6 +1,5 @@
-#ifndef _DFF_CONFIG_HPP
+#ifndef _CONFIG_HPP
 
-#define EOS_SYMBOL S(4, EOS)
-#define CMU_SYMBOL S(4, CMU)
+const auto CMU_SYMBOL = symbol( symbol_code("CMU"), 4 ) ;
 
 #endif

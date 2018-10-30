@@ -7,19 +7,17 @@
 #include <eosiolib/asset.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
+#include "utils.hpp"
  
-static constexpr time refund_delay = 3*24*3600;
+// static constexpr time refund_delay = 3*24*3600;
 
-#define TOKEN_CONTRACT N(dacincubator)
-#define TOKEN_SYMBOL S(4, PLT)
-
-typedef double real_type;
-typedef uint8_t card ;
+using namespace eosio ;
 
 using std::string;
-using eosio::symbol_name;
+using eosio::symbol_code;
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::extended_asset;
+using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
 
@@ -28,46 +26,48 @@ using eosio::action;
 // 还没实现72小时后取token。
 
 
-class council : public eosio::contract {
-    public: council(account_name self) :
-        contract(self),
-        _voters(_self, _self),
-        _proxies(_self, _self),
-        _council(_self, _self){}
-
-    // @abi table voter_table
-    struct voter_info {
-        account_name owner = 0;
-        account_name to    = 0;
+CONTRACT council : public eosio::contract {
+    public:
+        council( name receiver, name code, datastream<const char*> ds ) :
+            contract( receiver, code, ds ),
+            _voters( receiver, uint64_t(eosio::name::raw(receiver)) ),
+            _proxies( receiver, uint64_t(eosio::name::raw(receiver)) ),
+            _council( receiver, uint64_t(eosio::name::raw(receiver)) ){}
+    
+   TABLE voter_info {
+        account_name owner = 0; /// the voter
+        account_name to = 0; /// the proxy set by the voter, if any
         uint64_t     staked = 0;
-        uint64_t primary_key()const { return owner; }
+        
+        auto primary_key()const { return owner; }
     };       
 
-    // @abi table proxy_table
-    struct proxy_info {
+    TABLE proxy_info {
         account_name owner = 0;
         account_name to = 0;
         uint64_t     delegated_staked = 0;
-        uint64_t primary_key()const { return owner; }
+
+        auto primary_key()const { return owner; }
     };
 
-    // @abi table council_table
-    struct council_info {
-        account_name owner = 0;
+    TABLE council_info {
+        account_name owner = 0; /// the voter
+        account_name council; /// the producers approved by this voter if no proxy set
         uint64_t     total_votes = 0;
         uint64_t     unpaid = 0;          // 距离上次领取分红后未领取的分红
-        time         last_vote_time = 0;  // 上次领取分红的时间
+        // time         last_vote_time = 0;  // 上次领取分红的时间
 
-        uint64_t primary_key()const { return owner; }
+        auto primary_key()const { return owner; }
     };          
 
-    typedef eosio::multi_index<N(voters),  voter_info>  voters_table;
-    typedef eosio::multi_index<N(proxies), proxy_info>  proxies_table;
-    typedef eosio::multi_index<N(council), council_info>  council_table;    
-    voters_table _voters;
-    proxies_table _proxies;
-    council_table _council;
-    
+    typedef eosio::multi_index<"voters"_n,  voter_info>  voters_t;
+    typedef eosio::multi_index<"proxies"_n, proxy_info>  proxies_t;
+    typedef eosio::multi_index<"council"_n, council_info>  council_t;    
+    voters_t _voters;
+    proxies_t _proxies;
+    council_t _council;
+
+
     void stake(account_name from, uint64_t delta) {
         require_auth(from);
         eosio_assert(delta == 0, "must stake a positive amount");
@@ -76,7 +76,7 @@ class council : public eosio::contract {
         if (itr != _voters.end()) {    
             // voter already exist, update the staked information.
             unvote(itr);
-            _voters.modify(itr, 0, [&](auto &v) {
+            _voters.modify(itr, get_self(), [&](auto &v) {
                 v.staked += delta;
             });
             vote(itr); 
@@ -94,21 +94,21 @@ class council : public eosio::contract {
         auto itr = _voters.find(from);
         eosio_assert(itr != _voters.end(), "voter doesn't exist");
         unvote(itr); 
-        _voters.modify(itr, 0, [&](auto &v) {
+        _voters.modify(itr, get_self(), [&](auto &v) {
             v.staked = 0;
         });
         // todo(minakokojima): add unstake event.
     }    
 
-    void unvote(voters_table::const_iterator itr) {
+    void unvote(voters_t::const_iterator itr) {
         auto p = _proxies.find(itr->to);
         if (p != _proxies.end()) { 
-            _proxies.modify(p, 0, [&](auto &pp) {
+            _proxies.modify(p, get_self(), [&](auto &pp) {
                 pp.delegated_staked -= itr->staked;
             });
             auto c = _council.find(p->to);
             if (c != _council.end()) {                 
-                _council.modify(c, 0, [&](auto &cc) {
+                _council.modify(c, get_self(), [&](auto &cc) {
                     cc.total_votes -= itr->staked;
                 });     
             }
@@ -116,20 +116,20 @@ class council : public eosio::contract {
         }        
         auto c = _council.find(itr->to);
         if (c != _council.end()) {             
-            _council.modify(c, 0, [&](auto &cc) {
+            _council.modify(c, get_self(), [&](auto &cc) {
                 cc.total_votes -= itr->staked;
             });
         }
-        _voters.modify(itr, 0, [&](auto &v) {
+        _voters.modify(itr, get_self(), [&](auto &v) {
 
         });
     }
 
-    void unvote(proxies_table::const_iterator itr) {
+    void unvote(proxies_t::const_iterator itr) {
         /*
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
-            _council.modify(c, 0, [&](auto &cc) {
+            _council.modify(c, get_self(), [&](auto &cc) {
                 cc.total_votes -= itr->delegated_staked;
             });
         }
@@ -150,16 +150,16 @@ class council : public eosio::contract {
         }
     }
 
-    void vote(voters_table::const_iterator itr) {
+    void vote(voters_t::const_iterator itr) {
         unvote(itr);
         auto p = _proxies.find(itr->to);
         if (p != _proxies.end()) {             
-            _proxies.modify(p, 0, [&](auto &pp) {
+            _proxies.modify(p, get_self(), [&](auto &pp) {
                 pp.delegated_staked += itr->staked;
             });
             auto c = _council.find(p->to);
             if (c != _council.end()) { 
-                _council.modify(c, 0, [&](auto &cc) {
+                _council.modify(c, get_self(), [&](auto &cc) {
                     cc.total_votes += itr->staked;
                 });            
             }
@@ -167,18 +167,18 @@ class council : public eosio::contract {
         }        
         auto c = _council.find(itr->to);
         if (c != _council.end()) {             
-            _council.modify(c, 0, [&](auto &cc) {
+            _council.modify(c, get_self(), [&](auto &cc) {
                 cc.total_votes += itr->staked;
             });
             return;          
         }
     }
 
-    void vote(proxies_table::const_iterator itr) {   
+    void vote(proxies_t::const_iterator itr) {   
         unvote(itr);     
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
-            _council.modify(c, 0, [&](auto &cc) {
+            _council.modify(c, get_self(), [&](auto &cc) {
                 cc.total_votes += itr->delegated_staked;
             });
         }
@@ -188,7 +188,7 @@ class council : public eosio::contract {
         require_auth(from);
         auto v = _voters.find(from);
         if (v != _voters.end()) {                   
-            _voters.modify(v, 0, [&](auto &vv) {
+            _voters.modify(v, get_self(), [&](auto &vv) {
                 vv.to = to;
             });    
             vote(v);
@@ -197,7 +197,7 @@ class council : public eosio::contract {
 
         auto p = _proxies.find(from);
         if (p != _proxies.end()) {
-            _voters.modify(v, 0, [&](auto &vv) {
+            _voters.modify(v, get_self(), [&](auto &vv) {
                 vv.to = to;
             });    
             vote(v);

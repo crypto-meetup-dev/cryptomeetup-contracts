@@ -9,15 +9,14 @@
 #include <eosiolib/transaction.hpp>
  
 #define TOKEN_CONTRACT N(dacincubator)
-#define TOKEN_SYMBOL S(4, PLT)
 
 typedef double real_type;
-typedef uint8_t card ;
 
 using std::string;
-using eosio::symbol_name;
+using eosio::symbol_code;
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::extended_asset;
+using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
 

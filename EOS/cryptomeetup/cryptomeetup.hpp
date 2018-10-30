@@ -1,53 +1,49 @@
 /**
  *  @dev minakokojima, yukiexe
+ *  env: EOSIO.CDT v1.3.2
  *  @copyright Andoromeda
  */
 #pragma once
 #include <eosiolib/asset.hpp>
-#include <eosiolib/currency.hpp>
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 
+#include "utils.hpp"
 #include "council.hpp"
 #include "NFT.hpp"
 // #include <cmath>
-// #include <string>
 
 #include "config.hpp"
-#include "utils.hpp"
 #include "kyubey.hpp"
-// #include "eosio.token.hpp"
  
-typedef double real_type;
+using namespace eosio ;
 
 using std::string;
-using eosio::symbol_name;
+using eosio::symbol_code;
 using eosio::asset;
-using eosio::symbol_type;
+using eosio::extended_asset;
+using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
-using eosio::extended_asset;
-using eosio::unpack_action_data;
-using eosio::currency;
+using eosio::time_point_sec;
+using eosio::name ;
 
-class cryptomeetup : public council {
-    public: cryptomeetup(account_name self) :
-        council(self),
-        _global(_self, _self),
-        _market(_self, _self),
-        _land(_self, _self),
-        _player(_self, _self){}
+CONTRACT cryptomeetup : public council {
+    public:
+        cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
+        council( receiver, code, ds ),
+        _global( receiver, uint64_t(eosio::name::raw(receiver)) ),
+        _market( receiver, uint64_t(eosio::name::raw(receiver)) ),
+        _land( receiver, uint64_t(eosio::name::raw(receiver)) ),
+        _player( receiver, uint64_t(eosio::name::raw(receiver)) ){}
+        
 
-    // @abi action
-    void init();
-    // @abi action
-    void clear();     
-    // @abi action
-    void test();
-
-    // @abi action
-    void transfer(account_name   from,
+    ACTION init();
+    ACTION clear();
+    ACTION test();
+ 
+    ACTION transfer(account_name   from,
                   account_name   to,
                   asset          quantity,
                   string         memo);
@@ -55,17 +51,16 @@ class cryptomeetup : public council {
     void onTransfer(account_name from, account_name to,
                     extended_asset quantity, string& memo); 
 
-    // @abi action
-    void newland(account_name &from, asset &eos);
+    
+    ACTION newland(account_name &from, asset &eos);
 
-    void buy_land(account_name from, extended_asset in, const vector<string>& params);
-    void buy(account_name from, extended_asset in, const vector<string>& params);
-    void sell(account_name from, extended_asset in, const vector<string>& params);    
+    ACTION buy_land(account_name from, extended_asset in, const vector<string>& params);
+    ACTION buy(account_name from, extended_asset in, const vector<string>& params);
+    ACTION sell(account_name from, extended_asset in, const vector<string>& params);    
 
     void apply(account_name code, action_name action);
 
-    // @abi table land
-    struct land {
+    TABLE land {
         uint64_t     id;
         account_name owner = 0;
         uint64_t primary_key()const { return id; }        
@@ -87,9 +82,9 @@ class cryptomeetup : public council {
         }
     };*/
     
-    // @abi table player
-    struct player {
-        account_name  account;
+         
+    TABLE player {
+        capi_name  account;
         uint64_t land_profit;
         uint64_t ref_profit;
         uint64_t fee_profit;
@@ -97,36 +92,44 @@ class cryptomeetup : public council {
         uint64_t staked_income;
         uint64_t council_income;
 
-        uint64_t primary_key() const {return account;}        
+        auto primary_key() const {return account;}        
         void withdraw() {
         }
     };
         
-    // @abi table global
-    struct global {       
+    TABLE global {       
         uint64_t team;
         uint64_t pool;
         account_name last;
-        time st, ed;
+        // time st, ed;
     };
 
-    typedef eosio::multi_index<N(land), land> land_index;
-    land_index _land;   
-
-    typedef eosio::multi_index<N(player), player> player_index;
-    player_index _player;  
-
-    typedef eosio::multi_index<N(market), kyubey::market> market_index;
-    market_index _market;    
-
-    typedef singleton<N(global), global> singleton_global;
+    typedef singleton<"global"_n, global> singleton_global;
     singleton_global _global;       
+    typedef eosio::multi_index<"land"_n, land> land_t;
+    land_t _land;   
+
+    typedef eosio::multi_index<"player"_n, player> player_t;
+    player_t _player;  
+  
+    typedef eosio::multi_index<"market"_n, kyubey::market> market_t;
+    market_t _market;    
     
     /*
     // @abi action
     void receipt(const rec_reveal& reveal) {
         require_auth(_self);
     }
+
+    // @abi table bagsglobal
+    struct bagsglobal {      
+        uint64_t team;
+        uint64_t pool;
+        account_name last;
+        time st, ed;
+    };
+    typedef singleton<N(bagsglobal), bagsglobal> singleton_bagsglobal;
+    singleton_bagsglobal _bagsglobal;   
 
     uint64_t get_next_defer_id() {
     auto g = _global.get();    
@@ -142,45 +145,38 @@ class cryptomeetup : public council {
         trx.send(get_next_defer_id(), _self, false);
     }
 
-  // @abi action
-  void newbag(account_name &from, asset &eos);
-
+  
   // @abi action
   void setslogan(account_name &from, uint64_t id,string memo);
   
 private:
-    const vector<int64_t> getBets(const string &s, const char &c) ;
-    auto getBeton( const vector<int64_t> &v );
-    const int64_t getTotalBets(const vector<int64_t> &v);
-
-    auto checkBets( const asset &eos, const string &memo,
-                vector<int64_t> &vbets, int64_t &totalBets  );                
-
-    auto getResult( const card &a,  const card &b ) ;
     */
 };
 
-void cryptomeetup::apply(account_name code, action_name action) {   
+void cryptomeetup::apply(capi_name code, capi_name action) {   
     auto &thiscontract = *this;
-
-    if (action == N(transfer)) {
-        if (code == N(eosio.token)) {
-            auto transfer_data = unpack_action_data<currency::transfer>();
-            onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);
+    
+    if ( name(action) == "transfer"_n ) {
+        if ( name(code) == "eosio.token"_n ) {
+            auto transfer_data = eosio::unpack_action_data<st_transfer>();
+            onTransfer(transfer_data.from, transfer_data.to,
+                        extended_asset(transfer_data.quantity, name( code ) ),
+                        transfer_data.memo);
         }
         return;
     }
 
-    if (code != _self) return;
+    if (name(code) != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland));
+        // old: EOSIO_API(cryptomeetup, (init)(newland));
+        // EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
     };
 }
 
 extern "C" {
     [[noreturn]] void apply(uint64_t receiver, uint64_t code, uint64_t action) 
     {
-        cryptomeetup p(receiver);
+        cryptomeetup p( name(receiver), name(code), datastream<const char*>(nullptr, 0) );
         p.apply(code, action);
         eosio_exit(0);
     }
