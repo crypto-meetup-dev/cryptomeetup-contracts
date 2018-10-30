@@ -9,7 +9,7 @@
 #include <eosiolib/transaction.hpp>
 #include "utils.hpp"
  
-// static constexpr time refund_delay = 3*24*3600;
+static constexpr time refund_delay = 3*24*3600;
 
 using namespace eosio ;
 
@@ -55,7 +55,7 @@ CONTRACT council : public eosio::contract {
         account_name council; /// the producers approved by this voter if no proxy set
         uint64_t     total_votes = 0;
         uint64_t     unpaid = 0;          // 距离上次领取分红后未领取的分红
-        // time         last_vote_time = 0;  // 上次领取分红的时间
+        time         last_vote_time = 0;  // 上次领取分红的时间
 
         auto primary_key()const { return owner; }
     };          
