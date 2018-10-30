@@ -3,23 +3,19 @@
 #cleos -u http://api-direct.eosasia.one get table eosio minakokojima delband
 #cleos -u http://api-direct.eosasia.one set account permission cryptomeetup active '{"threshold": 1,"keys": [{"key": "EOS5x2vQgnAfvn6571VUFu43xVHTWzoysuQ875npKacf7YJqDKF8H","weight": 1}],"accounts": [{"permission":{"actor":"cryptomeetup","permission":"eosio.code"},"weight":1}]}' owner -p cryptomeetup
 cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
-
 #/usr/local/eosio/bin/eosiocpp -g cryptomeetup/cryptomeetup.abi  cryptomeetup/cryptomeetup.cpp
-#/usr/local/eosio/bin/eosiocpp -o cryptomeetup/cryptomeetup.wast cryptomeetup/cryptomeetup.cpp
-
-#eosio-abigen cryptomeetup/cryptomeetup.cpp --contract==cryptomeetup --output=cryptomeetup/cryptomeetup.abi
-eosio-cpp cryptomeetup/cryptomeetup.cpp -o cryptomeetup/cryptomeetup.wasm
-
-
-#cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
+/usr/local/eosio/bin/eosiocpp -o cryptomeetup/cryptomeetup.wast cryptomeetup/cryptomeetup.cpp
+cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
 
 
 
-#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "happyeosdice", "cryptomeetup", "1.0000 EOS" "buy_land 1"]' -p happyeosdice@active
-#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "1.0000 EOS" "buy_land 1"]' -p minakokojima@active
+#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "cryptomeetup", "godwin111111", "10.0000 EOS" "have a nice day"]' -p cryptomeetup@active
+#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "joannadujuan", "100.0000 EOS" "buy_land 45"]' -p minakokojima@active
 
 
-#cleos -u http://api.eosbeijing.one push action cryptomeetup newland '[ "minakokojima", "0.0100 EOS" ]' -p cryptomeetup@active minakokojima@active
+#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "40.0000 EOS" "buy_land 45"]' -p minakokojima@active
+
+#cleos -u http://api.eosbeijing.one push action cryptomeetup newland '[ "minakokojima", "0.1000 EOS" ]' -p cryptomeetup@active minakokojima@active
 
 #cleos -u http://api.eosbeijing.one get table -l 65536 cryptomeetup cryptomeetup land
 
@@ -59,7 +55,7 @@ eosio-cpp cryptomeetup/cryptomeetup.cpp -o cryptomeetup/cryptomeetup.wasm
 
 #cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0010 EOS", "0.0010 PXL" ]' -p minakokojima@active
 
-#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "eosotcbackup", "cryptomeetup", "0.0010 PXL", "0.0010 EOS" ]' -p eosotcbackup@active
+#cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "cryptomeetup", "shellteo2345", "100.0000 CMU", "develop community" ]' -p cryptomeetup@active
 
 #cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
 
