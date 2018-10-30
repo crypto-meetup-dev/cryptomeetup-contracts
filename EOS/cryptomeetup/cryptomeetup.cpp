@@ -43,6 +43,8 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
 
 void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<string>& params) {
 
+    auto g = _global.get();
+    eosio_assert( g.st <= now() && now() <= g.ed, "not correct time.");
     eosio_assert(in.contract == "eosio.token"_n, "only true EOS token is allowed");
     eosio_assert(in.quantity.symbol == EOS_SYMBOL, "only true EOS token is allowed");
    
@@ -108,7 +110,9 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
     _land.modify(itr, get_self(), [&](auto &t) {
         t.owner = from;
         t.price = itr->next_price();
-    });    
+    });
+
+    countdownrest() ;    
 }
 
 void cryptomeetup::buy(account_name from, extended_asset in, const vector<string>& params) {

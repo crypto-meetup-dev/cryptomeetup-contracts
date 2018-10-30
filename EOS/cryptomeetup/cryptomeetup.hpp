@@ -54,9 +54,22 @@ CONTRACT cryptomeetup : public council {
     
     ACTION newland(account_name &from, asset &eos);
 
-    ACTION buy_land(account_name from, extended_asset in, const vector<string>& params);
-    ACTION buy(account_name from, extended_asset in, const vector<string>& params);
-    ACTION sell(account_name from, extended_asset in, const vector<string>& params);    
+    void buy_land(account_name from, extended_asset in, const vector<string>& params);
+    void buy(account_name from, extended_asset in, const vector<string>& params);
+    void sell(account_name from, extended_asset in, const vector<string>& params);    
+
+    ACTION startnewround() {
+        require_auth(_self);    
+
+        auto g = global{
+            .st = now(),
+            .ed = now() + 60 * 60,
+        };
+        _global.set( g, _self );
+    }  
+
+
+   
 
     void apply(account_name code, action_name action);
 
@@ -101,7 +114,7 @@ CONTRACT cryptomeetup : public council {
         uint64_t team;
         uint64_t pool;
         account_name last;
-        // time st, ed;
+        time st, ed;
     };
 
     typedef singleton<"global"_n, global> singleton_global;
@@ -148,9 +161,14 @@ CONTRACT cryptomeetup : public council {
   
   // @abi action
   void setslogan(account_name &from, uint64_t id,string memo);
-  
+  */
 private:
-    */
+    void countdownrest() {
+        require_auth(_self);
+        auto g = _global.get();                     
+        g.ed = now() + 60 * 60;
+        _global.set(g, _self);
+    }
 };
 
 void cryptomeetup::apply(capi_name code, capi_name action) {   
