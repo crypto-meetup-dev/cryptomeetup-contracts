@@ -293,3 +293,63 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
         return;
     }*/
 }
+
+// 需要先转in数量的CMU到该合约地址，然后再调用这个函数。
+void cryptomeetup::setAirdrop(account_name from, extended_asset in){
+    require_auth(_self);
+    
+    _airdrop.emplace(_self, [&](auto &airdrop) {
+        airdrop.id = _airdrop.available_primary_key();
+        airdrop.airdropPool = in.amount;
+    });
+}
+
+// 希望能够维护一个 全局变量 totalPrice, 即所有的价格之和
+void cryptomeetup::airdrop(account_name from) {
+    
+    // 根据owner查找land，是根据第二主键查找，我觉得我写错了。
+    // 而且一个玩家可能有多个land, 所以还是得遍历所有land。所以整体还得套个大循环。
+    auto itr = _land.get_owner(from);
+
+    eosio_assert(itr == _land.end(), "no land you own");
+    
+    uint64_t amountCMU = 0; // 玩家能够领取的cmu
+
+    auto p = _dropPlayer.find(from);
+    if (p == _dropPlayer.end()) {
+        // 玩家还没领过空投，那就所有空投都领一遍。
+
+
+        for (int i = 0; i < _airdrop.end().id; i++) {
+            auto a = _airdrop.find(i);
+            amountCMU += itr.price * a.airdropPool / totalPrice;
+        }
+
+        _dropPlayer.emplace(_self, [&](auto &dropPlayer) {
+            dropPlayer.owner = from;
+            dropPlayer.dropGet = _airdrop.end().id - 1;
+        });
+    } else {
+        // 玩家已经领过空投，从上次领了的轮次后开始
+
+        for (int k = p.dropGet + 1; k < _airdrop.end().id; k++) {
+            auto ai = _airdrop.find(k);
+            amountCMU += itr.price * ai.airdropPool / totalPrice;
+        }
+
+        _dropPlayer.modify(p, 0, [&](auto &d) {
+            d.dropGet = _airdrop.end().id - 1;
+        })
+    }
+
+    eosio_assert(amountCMU == 0, "no airdrop can get");
+
+    action(
+        permission_level{_self, N(active)},
+        N(dacincubator), N(transfer),
+        make_tuple(_self, from, asset(amountCMU, CMU_SYMBOL),
+            std::string("CMU airdrop"))
+    ).send();
+
+
+}

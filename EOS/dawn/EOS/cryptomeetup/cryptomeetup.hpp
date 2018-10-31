@@ -73,7 +73,7 @@ class cryptomeetup : public council {
         uint64_t primary_key()const { return id; }        
         uint64_t price;           
         uint64_t parent;
-
+        // 我想设置owner为第二主键，方便根据owner查找land
         account_name get_owner() const { return owner; }
         void tax() {
         }
@@ -120,6 +120,19 @@ class cryptomeetup : public council {
         uint64_t airdropPool;
 
         uint64_t primary_key() const { return id };
+
+        EOSLIB_SERIALIZE(airdrop, (id)(airdropPool));
+    }
+
+    // @abi table dropPlayer
+    // 希望能够合并到Player里面，不过airdrop()逻辑得改
+    struct dropPlayer {
+        account_name owner;
+        uint64_t    dropGet;    // 已领到的最后一轮
+
+        uint64_t primary_key() const { return id };
+
+        EOSLIB_SERIALIZE(dropPlayer, (owner)(dropGet));
     }
 
     typedef eosio::multi_index<N(land), land> land_index;
@@ -132,7 +145,14 @@ class cryptomeetup : public council {
     market_index _market;    
 
     typedef singleton<N(global), global> singleton_global;
-    singleton_global _global;       
+    singleton_global _global;     
+
+    typedef eosio::multi_index<N(airdrop), airdrop> airdrop_index;
+    airdrop_index _airdrop;
+
+    typedef eosio::multi_index<N(dropPlayer), dropPlayer> dropPlayer_index;
+    dropPlayer_index _dropPlayer
+
     
     /*
     // @abi action
