@@ -139,7 +139,7 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
 void cryptomeetup::buy(account_name from, extended_asset in, const vector<string>& params) {
 
     eosio_assert(in.contract == N(eosio.token), "only true EOS token is allowed");
-    eosio_assert(in.symbol == EOS_SYMBOL, "only true EOS token is allowed");
+    eosio_assert(in.symbol == EOS_SYMBOL, "only true EOS token is allowed.");
    
     asset out;
     _market.modify(_market.begin(), 0, [&](auto &m) {
@@ -204,7 +204,7 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
 
     if (params[0] == "stake") {
         eosio_assert(quantity.contract == N(dacincubator), "must use CMU to stake");
-        eosio_assert(quantity.symbol == S(4, "CMU"), "must use CMU to stake");
+        eosio_assert(quantity.symbol == S(4, CMU), "must use CMU to stake");
         stake(from, quantity.amount);
         return;
     }

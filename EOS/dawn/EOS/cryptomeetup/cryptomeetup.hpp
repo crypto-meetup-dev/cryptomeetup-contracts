@@ -111,7 +111,7 @@ class cryptomeetup : public council {
     };
 
     typedef eosio::multi_index<N(land), land> land_index;
-    land_index _land;   
+    land_index _land;
 
     typedef eosio::multi_index<N(player), player> player_index;
     player_index _player;  
@@ -164,10 +164,8 @@ void cryptomeetup::apply(account_name code, action_name action) {
     auto &thiscontract = *this;
 
     if (action == N(transfer)) {
-        if (code == N(eosio.token)) {
-            auto transfer_data = unpack_action_data<currency::transfer>();
-            onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);
-        }
+        auto transfer_data = unpack_action_data<currency::transfer>();
+        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
         return;
     }
 
