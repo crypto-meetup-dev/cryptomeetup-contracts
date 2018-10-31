@@ -60,7 +60,9 @@ class cryptomeetup : public council {
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
     void buy(account_name from, extended_asset in, const vector<string>& params);
-    void sell(account_name from, extended_asset in, const vector<string>& params);    
+    void sell(account_name from, extended_asset in, const vector<string>& params); 
+    void setAirdrop(account_name from, extended_asset in);
+    void airdrop(account_name from);  
 
     void apply(account_name code, action_name action);
 
@@ -71,6 +73,8 @@ class cryptomeetup : public council {
         uint64_t primary_key()const { return id; }        
         uint64_t price;           
         uint64_t parent;
+
+        account_name get_owner() const { return owner; }
         void tax() {
         }
         uint64_t next_price() const {
@@ -109,6 +113,14 @@ class cryptomeetup : public council {
         account_name last;
         time st, ed;
     };
+
+    // @abi table airdrop
+    struct airdrop {
+        uint64_t id;
+        uint64_t airdropPool;
+
+        uint64_t primary_key() const { return id };
+    }
 
     typedef eosio::multi_index<N(land), land> land_index;
     land_index _land;
