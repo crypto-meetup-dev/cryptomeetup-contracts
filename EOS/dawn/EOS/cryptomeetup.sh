@@ -33,7 +33,7 @@ cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cry
 
 
 #cleos -u http://api.eosbeijing.one get table cryptomeetup cryptomeetup bag
-#cleos -u http://api.eosbeijing.one get table cryptomeetup cryptomeetup bagsglobal
+#cleos -u http://api.eosbeijing.one get table cryptomeetup cryptomeetup global
 
 #cleos -u http://api-direct.eosasia.one push action cryptomeetup init '[]' -p cryptomeetup@active
 

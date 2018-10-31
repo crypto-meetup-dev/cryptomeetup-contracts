@@ -7,15 +7,23 @@
 
 void cryptomeetup::init() {
     require_auth(_self);    
+
+    
+    auto g = _global.get_or_create( _self, global{});
+    g.st = 1540555220;
+    _global.set(g, _self); 
     
     /*
     while (_market.begin() != _market.end()) {
         _market.erase(_market.begin());
     }*/
 
+    /*
     auto g = _global.get_or_create( _self, global{});
     g.st = 1540555220;
-    _global.set(g, _self);    
+    _global.set(g, _self);   */ 
+
+    //_global.remove();
 
     /*
     if (_market.begin() == _market.end()) {
@@ -54,6 +62,29 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
     g.st = 1540555220 + 600;
     _global.set(g, _self);  
     
+}
+
+void cryptomeetup::withdraw(account_name from) {
+    require_auth(from);
+
+    singleton_players _players(_self, from);
+    auto p = _players.get_or_create(_self, player_info{});
+
+    send_defer_action(
+        permission_level{_self, N(active)},
+        N(dacincubator), N(transfer),
+        make_tuple(_self, from, 
+            asset(p.pool_profit, CMU_SYMBOL),
+            string("withdraw")
+        )
+    );
+
+    p.pool_profit = 0;
+    _players.set(p, _self);    
+}
+
+void cryptomeetup::airdrop(account_name to, uint64_t amount) {
+    // TODO(minakokojima): add amount to pool_profit.
 }
 
 void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<string>& params) {

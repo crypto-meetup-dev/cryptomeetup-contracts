@@ -36,8 +36,7 @@ class cryptomeetup : public council {
         council(self),
         _global(_self, _self),
         _market(_self, _self),
-        _land(_self, _self),
-        _player(_self, _self){}
+        _land(_self, _self){}
 
     // @abi action
     void init();
@@ -57,10 +56,15 @@ class cryptomeetup : public council {
 
     // @abi action
     void newland(account_name &from, asset &eos);
+    // @abi action
+    void withdraw(account_name from);
+    // @abbi action
+    void airdrop(account_name to, uint64_t amount);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
     void buy(account_name from, extended_asset in, const vector<string>& params);
     void sell(account_name from, extended_asset in, const vector<string>& params);    
+
 
     void apply(account_name code, action_name action);
 
@@ -88,24 +92,21 @@ class cryptomeetup : public council {
     };*/
     
     // @abi table player
-    struct player {
-        account_name  account;
+    struct player_info {
         uint64_t land_profit;
         uint64_t ref_profit;
         uint64_t fee_profit;
         uint64_t pool_profit;
         uint64_t staked_income;
         uint64_t council_income;
-
-        uint64_t primary_key() const {return account;}        
-        void withdraw() {
-        }
     };
         
     // @abi table global
     struct global {       
         uint64_t team;
         uint64_t pool;
+        uint64_t defer_id;
+        uint64_t total_staked;
         account_name last;
         time st, ed;
     };
@@ -113,25 +114,23 @@ class cryptomeetup : public council {
     typedef eosio::multi_index<N(land), land> land_index;
     land_index _land;
 
-    typedef eosio::multi_index<N(player), player> player_index;
-    player_index _player;  
-
     typedef eosio::multi_index<N(market), kyubey::market> market_index;
     market_index _market;    
 
     typedef singleton<N(global), global> singleton_global;
-    singleton_global _global;       
+    singleton_global _global;     
+
+    typedef singleton<N(players), player_info> singleton_players;  
     
-    /*
     // @abi action
     void receipt(const rec_reveal& reveal) {
         require_auth(_self);
     }
 
     uint64_t get_next_defer_id() {
-    auto g = _global.get();    
-    g.defer_id += 1;
-    _global.set(g,_self);
+        auto g = _global.get();    
+        g.defer_id += 1;
+        _global.set(g, _self);
         return g.defer_id;
     }
 
@@ -141,23 +140,6 @@ class cryptomeetup : public council {
         trx.actions.emplace_back(std::forward<Args>(args)...);
         trx.send(get_next_defer_id(), _self, false);
     }
-
-  // @abi action
-  void newbag(account_name &from, asset &eos);
-
-  // @abi action
-  void setslogan(account_name &from, uint64_t id,string memo);
-  
-private:
-    const vector<int64_t> getBets(const string &s, const char &c) ;
-    auto getBeton( const vector<int64_t> &v );
-    const int64_t getTotalBets(const vector<int64_t> &v);
-
-    auto checkBets( const asset &eos, const string &memo,
-                vector<int64_t> &vbets, int64_t &totalBets  );                
-
-    auto getResult( const card &a,  const card &b ) ;
-    */
 };
 
 void cryptomeetup::apply(account_name code, action_name action) {   
@@ -171,7 +153,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland));
+        EOSIO_API(cryptomeetup, (init)(newland)(withdraw)(airdrop));
     };
 }
 
