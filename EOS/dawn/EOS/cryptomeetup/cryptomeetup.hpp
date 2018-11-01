@@ -39,7 +39,7 @@ class cryptomeetup : public council {
         _land(_self, _self){}
 
     // @abi action
-    void init();
+    void init(uint64_t amount);
     // @abi action
     void clear();     
     // @abi action
