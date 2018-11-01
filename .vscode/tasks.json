@@ -16,7 +16,7 @@
             "command": "sh ${workspaceFolder}/.vscode/scripts/build.sh"
         },
         {
-            "label": "Generate ABI",
+            "label": "Generate ABI", 
             "type": "shell",
             "command": "eosio-abigen",
             "args": ["${fileBasenameNoExtension}.cpp", "--contract=${fileBasenameNoExtension}","--output=${fileBasenameNoExtension}.abi"]

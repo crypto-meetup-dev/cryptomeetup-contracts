@@ -20,13 +20,13 @@ struct st_transfer {
 
     EOSLIB_SERIALIZE( st_transfer, (from)(to)(quantity)(memo) )
 };
-
+/*
 struct account {
     asset    balance;
     uint64_t primary_key()const { return balance.amount; }
 };
 typedef eosio::multi_index<"accounts"_n, account> accounts_t;
-
+*/
 const vector<string> split(const string& s, const char& t) {
     string buff;
     vector<string> z;

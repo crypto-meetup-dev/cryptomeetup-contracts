@@ -9,7 +9,7 @@
 #include <eosiolib/transaction.hpp>
 #include "utils.hpp"
  
-static constexpr time refund_delay = 3*24*3600;
+
 
 using namespace eosio ;
 
@@ -17,7 +17,6 @@ using std::string;
 using eosio::symbol_code;
 using eosio::asset;
 using eosio::extended_asset;
-using eosio::symbol_code;
 using eosio::permission_level;
 using eosio::action;
 
@@ -26,14 +25,20 @@ using eosio::action;
 // 还没实现72小时后取token。
 
 
-CONTRACT council : public eosio::contract {
+class council { //: public eosio::contract {
     public:
-        council( name receiver, name code, datastream<const char*> ds ) :
-            contract( receiver, code, ds ),
-            _voters( receiver, uint64_t(eosio::name::raw(receiver)) ),
-            _proxies( receiver, uint64_t(eosio::name::raw(receiver)) ),
-            _council( receiver, uint64_t(eosio::name::raw(receiver)) ){}
+        council( name code ):// name code, name code, datastream<const char*> ds ) :
+           // contract( code, code, ds ),
+            _voters( code, uint64_t(eosio::name::raw(code)) ),
+            _proxies( code, uint64_t(eosio::name::raw(code)) ),
+            _council( code, uint64_t(eosio::name::raw(code)) ) {
+                _code = code ;
+
+            }
     
+    name _code ;
+
+
    TABLE voter_info {
         account_name owner = 0; /// the voter
         account_name to = 0; /// the proxy set by the voter, if any
@@ -76,13 +81,13 @@ CONTRACT council : public eosio::contract {
         if (itr != _voters.end()) {    
             // voter already exist, update the staked information.
             unvote(itr);
-            _voters.modify(itr, get_self(), [&](auto &v) {
+            _voters.modify(itr, _code, [&](auto &v) {
                 v.staked += delta;
             });
             vote(itr); 
         } else {
             // new voter.    
-            _voters.emplace(_self, [&](auto &v) {
+            _voters.emplace(_code, [&](auto &v) {
                 v.owner = from;
                 v.staked += delta;
             });
@@ -94,7 +99,7 @@ CONTRACT council : public eosio::contract {
         auto itr = _voters.find(from);
         eosio_assert(itr != _voters.end(), "voter doesn't exist");
         unvote(itr); 
-        _voters.modify(itr, get_self(), [&](auto &v) {
+        _voters.modify(itr, _code, [&](auto &v) {
             v.staked = 0;
         });
         // todo(minakokojima): add unstake event.
@@ -103,12 +108,12 @@ CONTRACT council : public eosio::contract {
     void unvote(voters_t::const_iterator itr) {
         auto p = _proxies.find(itr->to);
         if (p != _proxies.end()) { 
-            _proxies.modify(p, get_self(), [&](auto &pp) {
+            _proxies.modify(p, _code, [&](auto &pp) {
                 pp.delegated_staked -= itr->staked;
             });
             auto c = _council.find(p->to);
             if (c != _council.end()) {                 
-                _council.modify(c, get_self(), [&](auto &cc) {
+                _council.modify(c, _code, [&](auto &cc) {
                     cc.total_votes -= itr->staked;
                 });     
             }
@@ -116,11 +121,11 @@ CONTRACT council : public eosio::contract {
         }        
         auto c = _council.find(itr->to);
         if (c != _council.end()) {             
-            _council.modify(c, get_self(), [&](auto &cc) {
+            _council.modify(c, _code, [&](auto &cc) {
                 cc.total_votes -= itr->staked;
             });
         }
-        _voters.modify(itr, get_self(), [&](auto &v) {
+        _voters.modify(itr, _code, [&](auto &v) {
 
         });
     }
@@ -129,7 +134,7 @@ CONTRACT council : public eosio::contract {
         /*
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
-            _council.modify(c, get_self(), [&](auto &cc) {
+            _council.modify(c, _code, [&](auto &cc) {
                 cc.total_votes -= itr->delegated_staked;
             });
         }
@@ -154,12 +159,12 @@ CONTRACT council : public eosio::contract {
         unvote(itr);
         auto p = _proxies.find(itr->to);
         if (p != _proxies.end()) {             
-            _proxies.modify(p, get_self(), [&](auto &pp) {
+            _proxies.modify(p, _code, [&](auto &pp) {
                 pp.delegated_staked += itr->staked;
             });
             auto c = _council.find(p->to);
             if (c != _council.end()) { 
-                _council.modify(c, get_self(), [&](auto &cc) {
+                _council.modify(c, _code, [&](auto &cc) {
                     cc.total_votes += itr->staked;
                 });            
             }
@@ -167,7 +172,7 @@ CONTRACT council : public eosio::contract {
         }        
         auto c = _council.find(itr->to);
         if (c != _council.end()) {             
-            _council.modify(c, get_self(), [&](auto &cc) {
+            _council.modify(c, _code, [&](auto &cc) {
                 cc.total_votes += itr->staked;
             });
             return;          
@@ -178,7 +183,7 @@ CONTRACT council : public eosio::contract {
         unvote(itr);     
         auto c = _council.find(itr->to);
         if (c != _council.end()) { 
-            _council.modify(c, get_self(), [&](auto &cc) {
+            _council.modify(c, _code, [&](auto &cc) {
                 cc.total_votes += itr->delegated_staked;
             });
         }
@@ -188,7 +193,7 @@ CONTRACT council : public eosio::contract {
         require_auth(from);
         auto v = _voters.find(from);
         if (v != _voters.end()) {                   
-            _voters.modify(v, get_self(), [&](auto &vv) {
+            _voters.modify(v, _code, [&](auto &vv) {
                 vv.to = to;
             });    
             vote(v);
@@ -197,7 +202,7 @@ CONTRACT council : public eosio::contract {
 
         auto p = _proxies.find(from);
         if (p != _proxies.end()) {
-            _voters.modify(v, get_self(), [&](auto &vv) {
+            _voters.modify(v, _code, [&](auto &vv) {
                 vv.to = to;
             });    
             vote(v);

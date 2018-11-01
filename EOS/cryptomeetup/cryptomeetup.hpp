@@ -18,6 +18,7 @@
 #include "kyubey.hpp"
  
 using namespace eosio ;
+using namespace kyubey ;
 
 using std::string;
 using eosio::symbol_code;
@@ -29,14 +30,15 @@ using eosio::action;
 using eosio::time_point_sec;
 using eosio::name ;
 
-CONTRACT cryptomeetup : public council {
+CONTRACT cryptomeetup : public eosio::contract, public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
-        council( receiver, code, ds ),
-        _global( receiver, uint64_t(eosio::name::raw(receiver)) ),
-        _market( receiver, uint64_t(eosio::name::raw(receiver)) ),
-        _land( receiver, uint64_t(eosio::name::raw(receiver)) ),
-        _player( receiver, uint64_t(eosio::name::raw(receiver)) ){}
+        contract( receiver, code, ds ),
+        council( code ), //receiver, code, ds ),
+        _global( code, uint64_t(eosio::name::raw(code)) ),
+        _market( code, uint64_t(eosio::name::raw(code)) ),
+        _land( code, uint64_t(eosio::name::raw(code)) ),
+        _player( code, uint64_t(eosio::name::raw(code)) ){}
         
 
     ACTION init();
@@ -125,7 +127,7 @@ CONTRACT cryptomeetup : public council {
     typedef eosio::multi_index<"player"_n, player> player_t;
     player_t _player;  
   
-    typedef eosio::multi_index<"market"_n, kyubey::market> market_t;
+    typedef eosio::multi_index<"market"_n, market> market_t;
     market_t _market;    
     
     /*
