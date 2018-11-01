@@ -83,8 +83,30 @@ void cryptomeetup::withdraw(account_name from) {
     _players.set(p, _self);    
 }
 
-void cryptomeetup::airdrop(account_name to, uint64_t amount) {
+void cryptomeetup::airdrop(uint64_t amount) {
     // TODO(minakokojima): add amount to pool_profit.
+    require_auth(_self);
+
+    uint64_t _totalPrice = 0;
+
+    for (int i = 0; i < 250; ++i) {
+        auto itr = _land.find(i);
+        uint64_t _price = itr->price;
+        _totalPrice += _price;
+    }
+
+    for (int k = 0; k < 250; ++k) {
+        auto itr = _land.find(i);
+        uint64_t _price = itr->price;
+        account_name _owner = itr->owner;
+
+        uint64_t _amountCMU = _price * amount / _totalPrice;
+
+        singleton_players _players(_self, _owner);
+        auto p = _players.get_or_create(_self, player_info{});
+
+        p.pool_profit += _amountCMU;
+    }
 }
 
 void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<string>& params) {
