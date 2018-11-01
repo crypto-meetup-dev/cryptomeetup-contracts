@@ -5,6 +5,15 @@
 using namespace eosio;
 using namespace std;
 
+struct st_transfer {
+    account_name from;
+    account_name to;
+    asset        quantity;
+    string       memo;
+
+    EOSLIB_SERIALIZE( st_transfer, (from)(to)(quantity)(memo) )
+};
+
 struct account {
     asset    balance;
     uint64_t primary_key()const { return balance.amount; }
