@@ -39,7 +39,7 @@ class cryptomeetup : public council {
         _land(_self, _self){}
 
     // @abi action
-    void init();
+    void init(uint64_t amount);
     // @abi action
     void clear();     
     // @abi action
@@ -59,7 +59,7 @@ class cryptomeetup : public council {
     // @abi action
     void withdraw(account_name from);
     // @abbi action
-    void airdrop(uint64_t amount);
+    void airdrop(account_name to, uint64_t amount);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
     void buy(account_name from, extended_asset in, const vector<string>& params);
