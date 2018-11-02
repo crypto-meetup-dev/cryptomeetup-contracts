@@ -17,7 +17,7 @@ void cryptomeetup::init(uint64_t amount) {
     uint64_t _totalPrice = 0;
 
     for (int i = 0; i < 250; ++i) {
-        auto itr = _land.find(i);
+        auto itr = _land.find(i);           
         uint64_t _price = itr->price;
         _totalPrice += _price;
     }
@@ -237,7 +237,7 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
     require_auth(from);
 
     eosio_assert(quantity.is_valid(), "Invalid token transfer");
-    eosio_assert(quantity.amount > 0, "must buy a positive amount");
+    //eosio_assert(quantity.amount > 0, "must buy a positive amount"); // 为了方便前端调用unstake, claim
     
     auto params = split(memo, ' ');
     eosio_assert(params.size() >= 1, "Error params");
@@ -264,6 +264,14 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
         eosio_assert(quantity.symbol == S(4, CMU), "must use CMU to stake");
         stake(from, quantity.amount);
         return;
+    }
+
+    if (params[0] == "unstake") {
+        unstake(from);
+    }
+
+    if (params[0] == "claim") {
+        withdraw(from);
     }
     
     /*

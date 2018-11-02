@@ -68,14 +68,21 @@ class council : public eosio::contract {
     }
     
     void unstake(account_name from) {
-        /*
         require_auth(from);
-        auto itr = _voters.find(from);
-        eosio_assert(itr != _voters.end(), "voter doesn't exist");
-        unvote(itr); 
-        _voters.modify(itr, 0, [&](auto &v) {
-            v.staked = 0;
-        });*/
+        singleton_voters _voters(_self, from);
+        auto v = _voters.get_or_create(_self, voter_info{});
+        eosio_assert(v.staked == 0, "nothing to unstake");
+
+        unvote(v);
+        action( // winner winner chicken dinner
+            permission_level{_self, N(active)},
+            N(dacincubator), N(transfer),
+            make_tuple(_self, from, asset(v.staked, CMU_SYMBOL),
+                std::string("transfer token by unstake"))
+            ).send();
+            
+        v.staked = 0;
+        _voters.set(v, _self);
         // todo(minakokojima): add unstake event.
     }    
     /*
