@@ -39,11 +39,15 @@ class cryptomeetup : public council {
         _land(_self, _self){}
 
     // @abi action
-    void init(uint64_t amount);
+    void init();
     // @abi action
     void clear();     
     // @abi action
     void test();
+    // @abi action
+    void unstake(account_name from, uint64_t amount);
+    // @abi action
+    void claim(account_name from);    
 
     // @abi action
     void transfer(account_name   from,
@@ -56,8 +60,6 @@ class cryptomeetup : public council {
 
     // @abi action
     void newland(account_name &from, asset &eos);
-    // @abi action
-    void withdraw(account_name from);
     // @abbi action
     void airdrop(account_name to, uint64_t amount);
 
@@ -91,7 +93,7 @@ class cryptomeetup : public council {
         }
     };*/
     
-    // @abi table player
+    // @abi table players
     struct player_info {
         uint64_t land_profit;
         uint64_t ref_profit;
@@ -153,7 +155,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland)(withdraw)(airdrop));
+        EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim));
     };
 }
 

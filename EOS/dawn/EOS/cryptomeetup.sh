@@ -8,6 +8,11 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
 
 
+#cleos -u http://api.eosbeijing.one get table -l 65536 dacincubator societieseos accounts
+
+#cleos -u http://api.eosbeijing.one get table -l 65536 cryptomeetup minakokojima player
+
+
 
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "cryptomeetup", "godwin111111", "10.0000 EOS" "have a nice day"]' -p cryptomeetup@active
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "joannadujuan", "100.0000 EOS" "buy_land 45"]' -p minakokojima@active
@@ -18,6 +23,8 @@ cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cry
 #cleos -u http://api.eosbeijing.one push action cryptomeetup newland '[ "minakokojima", "0.1000 EOS" ]' -p cryptomeetup@active minakokojima@active
 
 #cleos -u http://api.eosbeijing.one get table -l 65536 cryptomeetup cryptomeetup land
+
+#cleos -u http://api.eosbeijing.one get table -l 65536 dacincubator cryptomeetup account
 
 #cleos -u http://api.eosbeijing.one get table -l 3 cryptomeetup cryptomeetup land
 
