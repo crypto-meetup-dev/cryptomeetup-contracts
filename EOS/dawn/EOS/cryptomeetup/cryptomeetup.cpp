@@ -220,14 +220,15 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
     });
 
     auto g = _global.get();
+
+    g.pool += out.amount;
     g.last = from;
     if (g.pool >= 2000*10000) {
         g.ed = now() + 60;
     } else {
-        g.ed = now() + (24*60*60 - ((g.pool * (23*60*60 + 59*60)) / 2000*10000));
-    }
-
-    g.pool += out.amount;
+        g.ed = now() + 24*60*60;
+        g.ed -= (( uint128_t(g.pool)*(23*60*60+59*60)) / 20000000);
+    }    
     _global.set(g, _self);       
 }
 
