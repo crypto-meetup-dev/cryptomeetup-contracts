@@ -269,7 +269,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
     eosio_assert(quantity.amount > 0, "must buy a positive amount");
     
     auto params = split(memo, ' ');
-    eosio_assert(params.size() >= 1, "Error params");
+    string a = "error";
+    eosio_assert(params.size() >= 1, a.c_str());
 
     if (params[0] == "buy_land") {
         auto g = _global.get();

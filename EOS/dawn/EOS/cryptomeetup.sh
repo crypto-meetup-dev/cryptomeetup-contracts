@@ -64,7 +64,7 @@ cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cry
 
 #cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "cryptomeetup", "shellteo2345", "100.0000 CMU", "develop community" ]' -p cryptomeetup@active
 
-#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.0100 EOS", "0.0100 PUB" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "0.100 EOS", "buy_land 45" ]' -p minakokojima@active
 
 #cleos -u http://api-direct.eosasia.one get table cryptomeetup cryptomeetup global
 
