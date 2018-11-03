@@ -60,7 +60,7 @@ class cryptomeetup : public council {
 
     // @abi action
     void newland(account_name &from, asset &eos);
-    // @abbi action
+    // @abi action
     void airdrop(account_name to, uint64_t amount);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
@@ -131,9 +131,9 @@ class cryptomeetup : public council {
 
     uint64_t get_next_defer_id() {
         auto g = _global.get();    
-        g.defer_id += 1;
+        g.defer_id += 10;
         _global.set(g, _self);
-        return g.defer_id;
+        return g.defer_id + 1;
     }
 
     template <typename... Args>
