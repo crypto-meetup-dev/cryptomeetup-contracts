@@ -56,7 +56,7 @@ class cryptomeetup : public council {
                   string         memo);
     
     void onTransfer(account_name from, account_name to,
-                    extended_asset quantity, string& memo); 
+                    extended_asset quantity, string memo); 
 
     // @abi action
     void newland(account_name &from, asset &eos);
@@ -144,12 +144,20 @@ class cryptomeetup : public council {
     }
 };
 
+
+struct st_transfer {
+    account_name from;
+    account_name to;
+    asset        quantity;
+    string       memo;
+};
+
 void cryptomeetup::apply(account_name code, action_name action) {   
     auto &thiscontract = *this;
 
     if (action == N(transfer)) {
-        auto transfer_data = unpack_action_data<currency::transfer>();
-        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
+        auto transfer_data = unpack_action_data<st_transfer>();
+        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);               
         return;
     }
 

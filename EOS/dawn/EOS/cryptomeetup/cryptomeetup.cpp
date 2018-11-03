@@ -11,7 +11,7 @@ void cryptomeetup::init() {
     for (int i=0;i<250;++i) {
         auto itr = _land.find(i);
         _land.modify(itr, 0, [&](auto &p) {
-            p.owner = N(dacincubator);
+            p.owner = N(eosotcbackup);
             p.price = 100;
         });
     }
@@ -157,6 +157,7 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
             std::string("exceed EOS refund"))
     ).send();    
 
+
     auto delta = itr->next_price() - itr->price;
     delta /= 2;    
 
@@ -207,12 +208,12 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
                 make_tuple(_self, itr->owner, out, std::string("mining token by play game"))
             ).send(); 
         }
-    }    
+    }  
 
     _land.modify(itr, 0, [&](auto &t) {
         t.owner = from;
         t.price = itr->next_price();
-    });    
+    });
 
     auto g = _global.get();
     g.last = from;
@@ -261,16 +262,24 @@ void cryptomeetup::sell(account_name from, extended_asset in, const vector<strin
     }
 }
 
-void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string& memo){
+void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string memo){
     if (to != _self) return;
     require_auth(from);
 
+    /*action(
+        permission_level{_self, N(active)},
+        quantity.contract, N(transfer),
+        make_tuple(_self, from, asset(quantity.amount, quantity.symbol),
+            memo)
+    ).send();    */    
+//    eosio_assert(quantity.amount == 1000, "not equal to 1000");
+  //  return;
+
+//    eosio_assert(quantity.amount == 1000, "not equal to 1000");
     eosio_assert(quantity.is_valid(), "Invalid token transfer");
     eosio_assert(quantity.amount > 0, "must buy a positive amount");
-    
     auto params = split(memo, ' ');
-    string a = "error";
-    eosio_assert(params.size() >= 1, a.c_str());
+    eosio_assert(params.size() >= 1, "error memo");
 
     if (params[0] == "buy_land") {
         auto g = _global.get();
@@ -280,7 +289,7 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
     }
 
     if (params[0] == "buy") {
-//      buy(from, quantity, params);
+        buy(from, quantity, params);
         return;
     }    
 
