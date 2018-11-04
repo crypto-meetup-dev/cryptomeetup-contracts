@@ -7,16 +7,19 @@
 
 void cryptomeetup::init() {
     require_auth(_self);    
-    /*
+    
     for (int i=0;i<250;++i) {
         auto itr = _land.find(i);
         _land.modify(itr, 0, [&](auto &p) {
             p.owner = N(eosotcbackup);
             p.price = 100;
         });
-    }*/
+    }
     auto g = _global.get_or_create( _self, global{});
-    g.st = 1541332800;
+    //g.st = 1541332800;
+    g.ed = 1541332800;
+    g.last = N(dacincubator);
+    g.pool = 0;
 
     _global.set(g, _self);      
     
