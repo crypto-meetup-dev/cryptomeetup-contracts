@@ -7,16 +7,17 @@
 
 void cryptomeetup::init() {
     require_auth(_self);    
-
+    /*
     for (int i=0;i<250;++i) {
         auto itr = _land.find(i);
         _land.modify(itr, 0, [&](auto &p) {
             p.owner = N(eosotcbackup);
             p.price = 100;
         });
-    }
+    }*/
     auto g = _global.get_or_create( _self, global{});
-    g.st = now();
+    g.st = 1541332800;
+
     _global.set(g, _self);      
     
    // auto g = _global.get_or_create( _self, global{});
@@ -80,9 +81,7 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
     for (int i=339;i<=339;++i) {
         auto itr = _land.find(i);
         _land.erase(itr);
-    }*/
-
-    
+    }*//*
     for (int i=0;i<250;++i) {
         auto itr = _land.find(i);
         _land.modify(itr, 0, [&](auto &p) {
@@ -93,7 +92,7 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
 
     auto g = _global.get_or_create( _self, global{});
     g.st = 1540555220 + 600;
-    _global.set(g, _self);  
+    _global.set(g, _self); */ 
     
 }
 
@@ -223,11 +222,11 @@ void cryptomeetup::buy_land(account_name from, extended_asset in, const vector<s
 
     g.pool += out.amount;
     g.last = from;
-    if (g.pool >= 2000*10000) {
+    if (g.pool >= 4000000000) {
         g.ed = now() + 60;
     } else {
         g.ed = now() + 24*60*60;
-        g.ed -= (( uint128_t(g.pool)*(23*60*60+59*60)) / 20000000);
+        g.ed -= (( uint128_t(g.pool)*(23*60*60+59*60)) / 4000000000);
     }    
     _global.set(g, _self);       
 }
@@ -289,8 +288,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
     eosio_assert(params.size() >= 1, "error memo");
 
     if (params[0] == "buy_land") {
-        auto g = _global.get();
-        eosio_assert(now() >= g.st, "This round will be start at 10/26/2018 @ 12:10pm (UTC).");
+        auto g = _global.get();     
+        eosio_assert(now() >= g.st, "This round will be start at 11/04/2018 @ 12:00pm (UTC).");
         buy_land(from, quantity, params);
         return;
     }
