@@ -56,11 +56,11 @@ class cryptomeetup : public council {
                   string         memo);
     
     void onTransfer(account_name from, account_name to,
-                    extended_asset quantity, string& memo); 
+                    extended_asset quantity, string memo); 
 
     // @abi action
     void newland(account_name &from, asset &eos);
-    // @abbi action
+    // @abi action
     void airdrop(account_name to, uint64_t amount);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
@@ -131,7 +131,7 @@ class cryptomeetup : public council {
 
     uint64_t get_next_defer_id() {
         auto g = _global.get();    
-        g.defer_id += 1;
+        g.defer_id += 10;
         _global.set(g, _self);
         return g.defer_id;
     }
@@ -144,12 +144,20 @@ class cryptomeetup : public council {
     }
 };
 
+
+struct st_transfer {
+    account_name from;
+    account_name to;
+    asset        quantity;
+    string       memo;
+};
+
 void cryptomeetup::apply(account_name code, action_name action) {   
     auto &thiscontract = *this;
 
     if (action == N(transfer)) {
-        auto transfer_data = unpack_action_data<currency::transfer>();
-        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
+        auto transfer_data = unpack_action_data<st_transfer>();
+        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);               
         return;
     }
 
