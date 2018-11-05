@@ -1971,6 +1971,17 @@
    (get_local $2)
    (get_local $1)
   )
+  (block $label$2
+   (br_if $label$2
+    (i32.lt_u
+     (get_local $1)
+     (i32.const 513)
+    )
+   )
+   (call $free
+    (get_local $2)
+   )
+  )
   (i32.store offset=4
    (i32.const 0)
    (get_local $3)
@@ -4286,9 +4297,7 @@
    )
   )
   (call $require_auth
-   (i64.load
-    (get_local $0)
-   )
+   (get_local $1)
   )
   (call $_ZN7council7unstakeEyy
    (get_local $0)

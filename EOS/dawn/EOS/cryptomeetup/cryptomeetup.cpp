@@ -121,7 +121,7 @@ void cryptomeetup::claim(account_name from) {
 }
 
 void cryptomeetup::unstake(account_name from, uint64_t amount) {
-    require_auth(_self);
+    require_auth(from);
     council::unstake(from, amount);
     auto g = _global.get();
     g.total_staked -= amount;
