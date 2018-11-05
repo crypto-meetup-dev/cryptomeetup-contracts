@@ -4286,9 +4286,7 @@
    )
   )
   (call $require_auth
-   (i64.load
-    (get_local $0)
-   )
+   (get_local $1)
   )
   (call $_ZN7council7unstakeEyy
    (get_local $0)
