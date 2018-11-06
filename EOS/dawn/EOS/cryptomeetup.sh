@@ -18,13 +18,15 @@ cleos -u http://api-direct.eosasia.one set contract cryptomeetup cryptomeetup -p
 
 
 
-#cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "cryptomeetup", "godwin111111", "10.0000 EOS" "have a nice day"]' -p cryptomeetup@active
+cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "thanosjw1314", "5.1000 EOS" "Thank you for test cryptothrone. Have a nice day!"]' -p minakokojima@active
 #
 
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "cryptomeetup", "wajueji12345", "98.0000 EOS" "congratuation."]' -p cryptomeetup@active
 
 
 #cleos -u http://api.eosbeijing.one push action cryptomeetup airdrop '[ "prajjmqyxcfz", "18000000"]' -p cryptomeetup@active
+
+cleos -u http://api.eosbeijing.one push action cryptomeetup unstake '[ "minakokojima", "20000"]' -p minakokojima@active
 
 #cleos -u http://api.eosbeijing.one push action cryptomeetup airdrop '[ "prajjmqyxcfz", "9000000"]' -p cryptomeetup@active
 
