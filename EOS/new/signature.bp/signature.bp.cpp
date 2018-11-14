@@ -51,6 +51,22 @@ void sign::airdrop(account_name to, uint64_t amount) {
 
 void sign::create(account_name from, extended_asset in, const vector<string>& params) {
     require_auth(from);
+    eosio_assert(in.contract == N(eosio.token), "only true EOS token is allowed");
+    eosio_assert(in.symbol == EOS_SYMBOL, "only true EOS token is allowed");    
+    eosio_assert(in.amount >= 1000, "you need at least 0.1 EOS to create an new signature");
+    _sign.emplace(_self, [&](auto &s) {
+        s.id = _sign.available_primary_key();
+        s.creator = from;
+        s.owner = from;
+        s.creator_fee = 20;
+        s.ref_fee = 50;
+        s.k = 350;
+        s.price = 1000;
+        s.anti_bot_fee = 500;
+        s.anti_bot_timer = 5*60*60;
+        s.last_buy_timer = 0;
+        s.st = now();
+    });    
 }
 
 void sign::sponsor(account_name from, extended_asset in, const vector<string>& params) {

@@ -26,8 +26,6 @@ namespace meetup {
     void create(account_name from, string& memo) {
     }
 
-
-
     struct meetup {
         uint64_t id;
         uint64_t staked; 

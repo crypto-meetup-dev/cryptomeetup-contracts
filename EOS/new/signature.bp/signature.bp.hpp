@@ -78,8 +78,9 @@ class sign : public council {
         uint64_t k;        
         uint64_t price;
         uint64_t anti_bot_fee;
-        uint64_t anti_bot_timer;
-        uint64_t last_buy_timer;        
+        time anti_bot_timer;
+        time last_buy_timer;        
+        time st;
         uint64_t primary_key()const { return id; }
         uint64_t next_price() const {
             return price * k / 1000;
@@ -103,7 +104,7 @@ class sign : public council {
         time st, ed;
     };
 
-    typedef eosio::multi_index<N(signs), sign> sign_index;
+    typedef eosio::multi_index<N(signs), sign_info> sign_index;
     sign_index _sign;
 
     typedef eosio::multi_index<N(market), kyubey::market> market_index;
