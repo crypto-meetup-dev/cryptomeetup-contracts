@@ -5,6 +5,19 @@
 
 #include "cryptomeetup.hpp"
 
+void cryptomeetup::checkin(account_name from, const checksum256 &hash) {
+    require_auth(from);
+    
+    checkin_index _check(_self, from);
+    auto p = _check.find(0);
+
+    if (p == _check.end()) {
+        _check.emplace(_self, [&](auto &m) {
+            m.event_id = 0;
+        });
+    }
+}
+
 void cryptomeetup::init() {
     require_auth(_self);    
     
@@ -12,12 +25,12 @@ void cryptomeetup::init() {
         auto itr = _land.find(i);
         _land.modify(itr, 0, [&](auto &p) {
             p.owner = N(eosotcbackup);
-            p.price = 100;
+            p.price = 1000;
         });
     }
     auto g = _global.get_or_create( _self, global{});
     //g.st = 1541332800;
-    g.ed = 1541332800;
+    g.ed = 1541332801;
     g.last = N(dacincubator);
     g.pool = 0;
 

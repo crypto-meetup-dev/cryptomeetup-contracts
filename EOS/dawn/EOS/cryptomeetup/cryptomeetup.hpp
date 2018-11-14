@@ -62,6 +62,8 @@ class cryptomeetup : public council {
     void newland(account_name &from, asset &eos);
     // @abi action
     void airdrop(account_name to, uint64_t amount);
+    // @abi action
+    void checkin(account_name from, const checksum256 &hash);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
     void buy(account_name from, extended_asset in, const vector<string>& params);
@@ -102,6 +104,12 @@ class cryptomeetup : public council {
         uint64_t staked_income;
         uint64_t council_income;
     };
+
+    // @abi table checkins
+    struct checkin_info {
+        uint64_t event_id;
+        uint64_t primary_key()const { return event_id; }        
+    };
         
     // @abi table global
     struct global {       
@@ -112,6 +120,8 @@ class cryptomeetup : public council {
         account_name last;
         time st, ed;
     };
+
+    typedef eosio::multi_index<N(checkins), checkin_info> checkin_index;
 
     typedef eosio::multi_index<N(land), land> land_index;
     land_index _land;
@@ -163,7 +173,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim));
+        EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
     };
 }
 
