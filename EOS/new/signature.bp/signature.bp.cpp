@@ -158,17 +158,17 @@ void sign::onTransfer(account_name from, account_name to, extended_asset quantit
     }    
 
     if (params[0] == "sell") {
-        // sell(from, quantity, params);
+        //sell(from, quantity, params);
         return;
     }
 
     if (params[0] == "stake") {        
-        /*eosio_assert(quantity.contract == N(dacincubator), "must use SST to stake");
+        eosio_assert(quantity.contract == N(dacincubator), "must use SST to stake");
         eosio_assert(quantity.symbol == S(4, SST), "must use SST to stake");
         stake(from, quantity.amount);
         auto g = _global.get();
         g.total_staked += quantity.amount;
         _global.set(g, _self);         
-        return;*/
+        return;
     }
 }
