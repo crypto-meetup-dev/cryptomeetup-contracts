@@ -7,6 +7,9 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
 
 
+#cleos -u http://api.eosbeijing.one push action cryptomeetup transfer '[ "cryptomeetup", "blockchainup", "9037.6354 CMU" ""]' -p cryptomeetup@active
+
+
 # cleos -u http://api.eosbeijing.one push action cryptomeetup checkin '[ "minakokojima", "0196d5b5d9ec1bc78ba927d2db2cb327d836f002601c77bd8c3f144a07ddc737"]' -p minakokojima@active
 # cleos -u http://api-direct.eosasia.one get table cryptomeetup minakokojima checkins
 

@@ -28,12 +28,12 @@ void cryptomeetup::init() {
             p.price = 1000;
         });
     }
+    
     auto g = _global.get_or_create( _self, global{});
     //g.st = 1541332800;
-    g.ed = 1541332801;
-    g.last = N(dacincubator);
-    g.pool = 0;
-
+    g.ed = 1541332801 - 24*3600;
+    g.last = N(blockchainup);
+//    g.pool = 0;
     _global.set(g, _self);      
     
    // auto g = _global.get_or_create( _self, global{});
@@ -305,7 +305,8 @@ void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset
 
     if (params[0] == "buy_land") {
         auto g = _global.get();     
-        eosio_assert(now() >= g.st, "This round will be start at 11/04/2018 @ 12:00pm (UTC).");
+        eosio_assert(now() >= g.st, "This round will be start at 11/04/2018 @ 12:00pm (UTC)");
+        eosio_assert(now() <= g.ed, "This round is end");        
         buy_land(from, quantity, params);
         return;
     }
