@@ -3,9 +3,9 @@
  *  @copyright Andoromeda
  */
 #pragma once
-#include <eosiolib/asset.hpp>
-#include <eosiolib/currency.hpp>
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/asset.hpp>
+// #include <eosiolib/currency.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 
@@ -29,7 +29,6 @@ using eosio::permission_level;
 using eosio::action;
 using eosio::extended_asset;
 using eosio::unpack_action_data;
-using eosio::currency;
 
 class cryptomeetup : public council {
     public: cryptomeetup(account_name self) :
@@ -167,7 +166,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (action == N(transfer)) {
         auto transfer_data = unpack_action_data<st_transfer>();
-        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);               
+        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
         return;
     }
 

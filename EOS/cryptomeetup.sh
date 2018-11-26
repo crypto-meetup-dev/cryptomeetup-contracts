@@ -12,8 +12,10 @@ eosio-cpp cryptomeetup/cryptomeetup.cpp -o cryptomeetup/cryptomeetup.wasm
 
 
 #cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
+ eosiocpp -g cryptomeetup.abi cryptomeetup.hpp
+ eosio-cpp -abigen cryptomeetup.cpp -o cryptomeetup.wasm
 
-
+ eosio-abigen cryptomeetup.cpp --contract=cryptomeetup --contract=council  --output=cryptomeetup.abi
 
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "happyeosdice", "cryptomeetup", "1.0000 EOS" "buy_land 1"]' -p happyeosdice@active
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "minakokojima", "cryptomeetup", "1.0000 EOS" "buy_land 1"]' -p minakokojima@active
@@ -154,6 +156,3 @@ eosio-cpp cryptomeetup/cryptomeetup.cpp -o cryptomeetup/cryptomeetup.wasm
 # /usr/local/eosio/bin/eosiocpp -g pomelo/pomelo.abi pomelo/pomelo.cpp
 # cleos -u https://api-kylin.eosasia.one set contract pomelodex111 pomelo -p pomelodex111@active
 # cleos -u https://api-kylin.eosasia.one system newaccount --stake-net '5.0000 EOS' --stake-cpu '1.0000 EOS' --buy-ram '20.0000 EOS' minakokojima pomelodex111 EOS5fY2dmpfXmzXN1DEJ6VfvhhCr55ZpE9MyTd9eX7Cw2EmzJcnFM EOS781pFN6TgUkuCDqmCdyxcp1cnJdtg3DYfajbAba6mvHvrFNuDy
-
-
-# buy,happyeosslot,HPY,2.0000

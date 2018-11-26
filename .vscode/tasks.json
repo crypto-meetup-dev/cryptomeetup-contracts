@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "reveal": "always",
     "options": {
-        "cwd": "${workspaceFolder}/EOS/${fileBasenameNoExtension}/"
+        "cwd": "${workspaceFolder}/EOS/dawn/EOS/${fileBasenameNoExtension}/"
     },
     "tasks": [
         {
@@ -16,7 +16,7 @@
             "command": "sh ${workspaceFolder}/.vscode/scripts/build.sh"
         },
         {
-            "label": "Generate ABI",
+            "label": "Generate ABI", 
             "type": "shell",
             "command": "eosio-abigen",
             "args": ["${fileBasenameNoExtension}.cpp", "--contract=${fileBasenameNoExtension}","--output=${fileBasenameNoExtension}.abi"]
