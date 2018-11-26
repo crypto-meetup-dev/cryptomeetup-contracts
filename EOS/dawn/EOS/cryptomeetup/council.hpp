@@ -7,14 +7,10 @@
 #include <eosiolib/asset.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
- 
+#include "config.hpp"
 static constexpr time refund_delay = 3*24*3600;
 
-#define TOKEN_CONTRACT N(dacincubator)
-#define TOKEN_SYMBOL S(4, PLT)
-
 typedef double real_type;
-typedef uint8_t card ;
 
 using std::string;
 using eosio::symbol_name;
@@ -67,16 +63,22 @@ class council : public eosio::contract {
         _voters.set(v, _self);
     }
     
-    void unstake(account_name from) {
-        /*
+    void unstake(account_name from, uint64_t amount) {
         require_auth(from);
-        auto itr = _voters.find(from);
-        eosio_assert(itr != _voters.end(), "voter doesn't exist");
-        unvote(itr); 
-        _voters.modify(itr, 0, [&](auto &v) {
-            v.staked = 0;
-        });*/
-        // todo(minakokojima): add unstake event.
+        singleton_voters _voters(_self, from);
+        auto v = _voters.get_or_create(_self, voter_info{});
+        eosio_assert(amount <= v.staked, "don't have enough CMU for unstake");
+        // TODO(minakokojima): unvote(v);
+
+        action( // winner winner chicken dinner
+            permission_level{_self, N(active)},
+            N(dacincubator), N(transfer),
+            make_tuple(_self, from, asset(amount, TOKEN_SYMBOL),
+                std::string("transfer token by unstake"))
+        ).send();
+            
+        v.staked -= amount;
+        _voters.set(v, _self);
     }    
     /*
     void unvote(voters_table::const_iterator itr) {

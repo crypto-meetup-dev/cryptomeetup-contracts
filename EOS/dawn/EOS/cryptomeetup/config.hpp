@@ -3,4 +3,7 @@
 #define EOS_SYMBOL S(4, EOS)
 #define CMU_SYMBOL S(4, CMU)
 
+#define TOKEN_SYMBOL CMU_SYMBOL
+#define TOKEN_CONTRACT N(dacincubator)
+
 #endif

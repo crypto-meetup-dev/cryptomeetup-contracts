@@ -43,6 +43,10 @@ class cryptomeetup : public council {
     void clear();     
     // @abi action
     void test();
+    // @abi action
+    void unstake(account_name from, uint64_t amount);
+    // @abi action
+    void claim(account_name from);    
 
     // @abi action
     void transfer(account_name   from,
@@ -51,14 +55,14 @@ class cryptomeetup : public council {
                   string         memo);
     
     void onTransfer(account_name from, account_name to,
-                    extended_asset quantity, string& memo); 
+                    extended_asset quantity, string memo); 
 
     // @abi action
     void newland(account_name &from, asset &eos);
     // @abi action
-    void withdraw(account_name from);
-    // @abbi action
     void airdrop(account_name to, uint64_t amount);
+    // @abi action
+    void checkin(account_name from, const checksum256 &hash);
 
     void buy_land(account_name from, extended_asset in, const vector<string>& params);
     void buy(account_name from, extended_asset in, const vector<string>& params);
@@ -90,7 +94,7 @@ class cryptomeetup : public council {
         }
     };*/
     
-    // @abi table player
+    // @abi table players
     struct player_info {
         uint64_t land_profit;
         uint64_t ref_profit;
@@ -98,6 +102,12 @@ class cryptomeetup : public council {
         uint64_t pool_profit;
         uint64_t staked_income;
         uint64_t council_income;
+    };
+
+    // @abi table checkins
+    struct checkin_info {
+        uint64_t event_id;
+        uint64_t primary_key()const { return event_id; }        
     };
         
     // @abi table global
@@ -109,6 +119,8 @@ class cryptomeetup : public council {
         account_name last;
         time st, ed;
     };
+
+    typedef eosio::multi_index<N(checkins), checkin_info> checkin_index;
 
     typedef eosio::multi_index<N(land), land> land_index;
     land_index _land;
@@ -128,7 +140,7 @@ class cryptomeetup : public council {
 
     uint64_t get_next_defer_id() {
         auto g = _global.get();    
-        g.defer_id += 1;
+        g.defer_id += 10;
         _global.set(g, _self);
         return g.defer_id;
     }
@@ -139,6 +151,14 @@ class cryptomeetup : public council {
         trx.actions.emplace_back(std::forward<Args>(args)...);
         trx.send(get_next_defer_id(), _self, false);
     }
+};
+
+
+struct st_transfer {
+    account_name from;
+    account_name to;
+    asset        quantity;
+    string       memo;
 };
 
 void cryptomeetup::apply(account_name code, action_name action) {   
@@ -152,7 +172,7 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland)(withdraw)(airdrop));
+        EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
     };
 }
 
