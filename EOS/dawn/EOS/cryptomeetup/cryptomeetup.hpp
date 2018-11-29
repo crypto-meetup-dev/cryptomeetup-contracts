@@ -154,25 +154,19 @@ class cryptomeetup : public council {
 };
 
 
-struct st_transfer {
-    account_name from;
-    account_name to;
-    asset        quantity;
-    string       memo;
-};
 
 void cryptomeetup::apply(account_name code, action_name action) {   
     auto &thiscontract = *this;
 
     if (action == N(transfer)) {
         auto transfer_data = unpack_action_data<st_transfer>();
-        onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
+        // onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, code), transfer_data.memo);    
         return;
     }
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
+        // EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
     };
 }
 
