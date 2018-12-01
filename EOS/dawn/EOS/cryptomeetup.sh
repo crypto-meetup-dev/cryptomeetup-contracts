@@ -4,7 +4,7 @@
 cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
 /usr/local/eosio/bin/eosiocpp -g cryptomeetup/cryptomeetup.abi  cryptomeetup/cryptomeetup.cpp
 /usr/local/eosio/bin/eosiocpp -o cryptomeetup/cryptomeetup.wast cryptomeetup/cryptomeetup.cpp
-cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@active
+cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@owner
 
 
 #cleos -u http://api.eosbeijing.one push action cryptomeetup transfer '[ "cryptomeetup", "blockchainup", "9037.6354 CMU" ""]' -p cryptomeetup@active

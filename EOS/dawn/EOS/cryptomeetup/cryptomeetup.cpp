@@ -93,6 +93,9 @@ void cryptomeetup::init() {
 void cryptomeetup::newland(account_name &from, asset &eos) {
     require_auth(_self);
 
+    singleton_voters _voters(_self, from);
+    _voters.remove();
+
 /*
     for (int i=339;i<=339;++i) {
         auto itr = _land.find(i);
