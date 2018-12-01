@@ -94,7 +94,17 @@ void cryptomeetup::newland(account_name &from, asset &eos) {
     require_auth(_self);
 
     singleton_voters _voters(_self, from);
-    _voters.remove();
+    
+    while (_voters._t.begin() != _voters._t.end()) {
+        _voters._t.erase(_voters._t.begin() );
+    }
+
+/*        auto v = _voters.get_or_create(_self, voter_info{});
+        v.staked += 1;
+        _voters.set(v, _self);
+
+*/
+   // _voters.remove();
 
 /*
     for (int i=339;i<=339;++i) {

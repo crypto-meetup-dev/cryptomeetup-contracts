@@ -5,7 +5,8 @@
 #pragma once
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/asset.hpp>
-#include <eosiolib/singleton.hpp>
+// #include <eosiolib/singleton.hpp>
+#include "utils.hpp"
 #include <eosiolib/transaction.hpp>
  
 typedef double real_type;

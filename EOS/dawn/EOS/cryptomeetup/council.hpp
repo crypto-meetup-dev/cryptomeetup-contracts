@@ -5,7 +5,8 @@
 #pragma once
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/asset.hpp>
-#include <eosiolib/singleton.hpp>
+#include "utils.hpp"
+// #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 #include "config.hpp"
 static constexpr time refund_delay = 3*24*3600;
