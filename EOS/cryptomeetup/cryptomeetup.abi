@@ -1,6 +1,6 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Oct 30 15:25:44 2018",
-    "version": "eosio::abi/1.0",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Dec  3 03:49:00 2018",
+    "version": "eosio::abi/1.1",
     "structs": [
         {
             "name": "clear",
@@ -117,31 +117,13 @@
             "name": "test",
             "base": "",
             "fields": []
-        },
-        {
-            "name": "transfer",
-            "base": "",
-            "fields": [
-                {
-                    "name": "from",
-                    "type": "account_name"
-                },
-                {
-                    "name": "to",
-                    "type": "account_name"
-                },
-                {
-                    "name": "quantity",
-                    "type": "asset"
-                },
-                {
-                    "name": "memo",
-                    "type": "string"
-                }
-            ]
         }
     ],
     "types": [
+        {
+            "new_type_name": "account_name",
+            "type": "name"
+        },
         {
             "new_type_name": "time",
             "type": "uint32"
@@ -172,11 +154,6 @@
             "name": "test",
             "type": "test",
             "ricardian_contract": ""
-        },
-        {
-            "name": "transfer",
-            "type": "transfer",
-            "ricardian_contract": ""
         }
     ],
     "tables": [
@@ -203,5 +180,6 @@
         }
     ],
     "ricardian_clauses": [],
+    "variants": [],
     "abi_extensions": []
 }

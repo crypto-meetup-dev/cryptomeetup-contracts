@@ -158,7 +158,7 @@ void cryptomeetup::sell(account_name from, extended_asset quantity, const vector
     }*/
 }
 
-void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string& memo){
+void cryptomeetup::onTransfer(account_name from, account_name to, extended_asset quantity, string memo){
     if ( name(to) != _self) return;
     require_auth(from);
 

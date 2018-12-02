@@ -17,8 +17,9 @@
 #include "config.hpp"
 #include "kyubey.hpp"
  
-using namespace eosio ;
-using namespace kyubey ;
+using namespace eosio;
+using namespace std;
+using namespace kyubey;
 
 using std::string;
 using eosio::symbol_code;
@@ -44,14 +45,8 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
     ACTION init();
     ACTION clear();
     ACTION test();
- 
-    ACTION transfer(account_name   from,
-                  account_name   to,
-                  asset          quantity,
-                  string         memo);
     
-    void onTransfer(account_name from, account_name to,
-                    extended_asset quantity, string& memo); 
+    void onTransfer(account_name from, account_name to, extended_asset in, string memo); 
 
     
     ACTION newland(account_name &from, asset &eos);
