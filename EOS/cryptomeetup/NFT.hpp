@@ -8,8 +8,6 @@
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
  
-#define TOKEN_CONTRACT N(dacincubator)
-
 typedef double real_type;
 
 using std::string;

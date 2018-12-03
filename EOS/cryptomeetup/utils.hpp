@@ -2,13 +2,12 @@
 #include <eosiolib/symbol.hpp>
 #include <string>
 #include <vector>
+#include "config.hpp"
 
 using namespace eosio;
 using namespace std;
 
 typedef uint32_t time;
-
-const auto EOS_SYMBOL = symbol( symbol_code("EOS"), 4 ) ;
 
 struct st_transfer {
     name from;
