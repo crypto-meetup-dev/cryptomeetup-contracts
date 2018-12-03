@@ -6,15 +6,13 @@
 using namespace eosio;
 using namespace std;
 
-typedef capi_name account_name;
-typedef capi_name action_name;
 typedef uint32_t time;
 
 const auto EOS_SYMBOL = symbol( symbol_code("EOS"), 4 ) ;
 
 struct st_transfer {
-    account_name from;
-    account_name to;
+    name from;
+    name to;
     asset        quantity;
     string       memo;
 

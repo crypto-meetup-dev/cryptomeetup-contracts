@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Dec  3 03:49:00 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Dec  3 23:54:01 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -21,7 +21,7 @@
                 },
                 {
                     "name": "last",
-                    "type": "account_name"
+                    "type": "name"
                 },
                 {
                     "name": "st",
@@ -40,25 +40,8 @@
         },
         {
             "name": "land",
-            "base": "",
-            "fields": [
-                {
-                    "name": "id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "owner",
-                    "type": "account_name"
-                },
-                {
-                    "name": "price",
-                    "type": "uint64"
-                },
-                {
-                    "name": "parent",
-                    "type": "uint64"
-                }
-            ]
+            "base": "tradeable_token",
+            "fields": []
         },
         {
             "name": "newland",
@@ -66,7 +49,7 @@
             "fields": [
                 {
                     "name": "from",
-                    "type": "account_name"
+                    "type": "name"
                 },
                 {
                     "name": "eos",
@@ -117,13 +100,55 @@
             "name": "test",
             "base": "",
             "fields": []
+        },
+        {
+            "name": "token",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "tradeable_token",
+            "base": "token",
+            "fields": [
+                {
+                    "name": "price",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "transfer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
         }
     ],
     "types": [
-        {
-            "new_type_name": "account_name",
-            "type": "name"
-        },
         {
             "new_type_name": "time",
             "type": "uint32"
@@ -153,6 +178,11 @@
         {
             "name": "test",
             "type": "test",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "transfer",
+            "type": "transfer",
             "ricardian_contract": ""
         }
     ],

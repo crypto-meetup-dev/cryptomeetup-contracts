@@ -21,39 +21,29 @@ using namespace eosio;
 using namespace std;
 using namespace kyubey;
 
-using std::string;
-using eosio::symbol_code;
-using eosio::asset;
-using eosio::extended_asset;
-using eosio::symbol_code;
-using eosio::permission_level;
-using eosio::action;
-using eosio::time_point_sec;
-using eosio::name ;
 
-CONTRACT cryptomeetup : public eosio::contract, public council {
+
+
+CONTRACT cryptomeetup : public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
-        contract( receiver, code, ds ),
-        council( code ), //receiver, code, ds ),
+        //contract( receiver, code, ds ),
+        council( receiver, code, ds ),
         _global( code, uint64_t(eosio::name::raw(code)) ),
         _market( code, uint64_t(eosio::name::raw(code)) ),
         _land( code, uint64_t(eosio::name::raw(code)) ),
         _player( code, uint64_t(eosio::name::raw(code)) ){}
         
-
     ACTION init();
     ACTION clear();
     ACTION test();
-    
-    void onTransfer(account_name from, account_name to, extended_asset in, string memo); 
+    ACTION newland(name &from, asset &eos);    
 
-    
-    ACTION newland(account_name &from, asset &eos);
-
-    void buy_land(account_name from, extended_asset in, const vector<string>& params);
-    void buy(account_name from, extended_asset in, const vector<string>& params);
-    void sell(account_name from, extended_asset in, const vector<string>& params);    
+    ACTION transfer(name from, name to, asset quantity, string memo);    
+    void onTransfer(name from, name to, extended_asset in, string memo); 
+    void buy_land(name from, extended_asset in, const vector<string>& params);
+    void buy(name from, extended_asset in, const vector<string>& params);
+    void sell(name from, extended_asset in, const vector<string>& params);    
 
     ACTION startnewround() {
         require_auth(_self);    
@@ -66,13 +56,10 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
     }  
 
 
-   
-
-    void apply(account_name code, action_name action);
-
+    /*
     TABLE land {
         uint64_t     id;
-        account_name owner = 0;
+        name owner = 0;
         uint64_t primary_key()const { return id; }        
         uint64_t price;           
         uint64_t parent;
@@ -82,15 +69,16 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
             return price * 1.35;
         }
     };    
-    /*
-    struct land : public NFT::tradeable_token {
-        uint64_t parent;
+    */
+
+    TABLE land : public NFT::tradeable_token {
+        //uint64_t parent;
         void tax() {
         }
         uint64_t next_price() const {
             return price * 1.35;
         }
-    };*/
+    };
     
          
     TABLE player {
@@ -110,7 +98,7 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
     TABLE global {       
         uint64_t team;
         uint64_t pool;
-        account_name last;
+        name last;
         time st, ed;
     };
 
@@ -135,7 +123,7 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
     struct bagsglobal {      
         uint64_t team;
         uint64_t pool;
-        account_name last;
+        name last;
         time st, ed;
     };
     typedef singleton<N(bagsglobal), bagsglobal> singleton_bagsglobal;
@@ -157,8 +145,10 @@ CONTRACT cryptomeetup : public eosio::contract, public council {
 
   
   // @abi action
-  void setslogan(account_name &from, uint64_t id,string memo);
+  void setslogan(name &from, uint64_t id,string memo);
   */
+
+ /*
 private:
     void countdownrest() {
         require_auth(_self);
@@ -166,8 +156,23 @@ private:
         g.ed = now() + 60 * 60;
         _global.set(g, _self);
     }
-};
+};*/
 
+    void apply(uint64_t receiver, uint64_t code, uint64_t action) {
+        auto &thiscontract = *this;
+        if (action == name("transfer").value) {
+            auto transfer_data = unpack_action_data<st_transfer>();
+            onTransfer(transfer_data.from, transfer_data.to, extended_asset(transfer_data.quantity, name(code)), transfer_data.memo);
+            return;
+        }
+
+        switch (action) {
+            // EOSIO_DISPATCH_HELPER(payout, (unstake)(refund)(claim) )
+        }
+    }
+
+
+    /*
 void cryptomeetup::apply(capi_name code, capi_name action) {   
     auto &thiscontract = *this;
     
@@ -184,15 +189,18 @@ void cryptomeetup::apply(capi_name code, capi_name action) {
     if (name(code) != _self) return;
     switch (action) {
         // old: EOSIO_API(cryptomeetup, (init)(newland));
-        // EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
+//        EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
+//        EOSIO_API(cryptomeetup, (init)(clear)(test)(buy)(transfer));
+//        EOSIO_API(cryptomeetup, (init));
+              //  OSIO_API(cryptomeetup, (init));
     };
-}
+    */
+};
 
 extern "C" {
-    [[noreturn]] void apply(uint64_t receiver, uint64_t code, uint64_t action) 
-    {
+    [[noreturn]] void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         cryptomeetup p( name(receiver), name(code), datastream<const char*>(nullptr, 0) );
-        p.apply(code, action);
+        p.apply(receiver, code, action);
         eosio_exit(0);
     }
 }
