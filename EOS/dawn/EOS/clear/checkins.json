@@ -1,0 +1,47 @@
+{
+    "rows": [
+        {
+            "code": "cryptomeetup",
+            "scope": "cryptobuffff",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        },
+        {
+            "code": "cryptomeetup",
+            "scope": "eosdapplover",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        },
+        {
+            "code": "cryptomeetup",
+            "scope": "knowncarried",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        },
+        {
+            "code": "cryptomeetup",
+            "scope": "minakokojima",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        },
+        {
+            "code": "cryptomeetup",
+            "scope": "tmonomonomon",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        },
+        {
+            "code": "cryptomeetup",
+            "scope": "yinut1yinut2",
+            "table": "checkins",
+            "payer": "cryptomeetup",
+            "count": 1
+        }
+    ],
+    "more": ""
+}

@@ -1,0 +1,215 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Dec  4 06:28:08 2018",
+    "version": "eosio::abi/1.1",
+    "structs": [
+        {
+            "name": "clear",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "global",
+            "base": "",
+            "fields": [
+                {
+                    "name": "team",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pool",
+                    "type": "uint64"
+                },
+                {
+                    "name": "last",
+                    "type": "name"
+                },
+                {
+                    "name": "st",
+                    "type": "time"
+                },
+                {
+                    "name": "ed",
+                    "type": "time"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "land",
+            "base": "tradeable_token",
+            "fields": []
+        },
+        {
+            "name": "newland",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "eos",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "player",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "land_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ref_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "fee_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pool_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "staked_income",
+                    "type": "uint64"
+                },
+                {
+                    "name": "council_income",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "startnewround",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "test",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "token",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "tradeable_token",
+            "base": "token",
+            "fields": [
+                {
+                    "name": "price",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "transfer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "types": [
+        {
+            "new_type_name": "time",
+            "type": "uint32"
+        }
+    ],
+    "actions": [
+        {
+            "name": "clear",
+            "type": "clear",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newland",
+            "type": "newland",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "startnewround",
+            "type": "startnewround",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "test",
+            "type": "test",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "transfer",
+            "type": "transfer",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "global",
+            "type": "global",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "land",
+            "type": "land",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "player",
+            "type": "player",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "abi_extensions": []
+}

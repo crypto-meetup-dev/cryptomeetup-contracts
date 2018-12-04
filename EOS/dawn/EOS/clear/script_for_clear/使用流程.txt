@@ -1,0 +1,14 @@
+1. python 环境 （python 3.6.5 亲测没问题）(python3 -V)
+2. pip3 install pipenv 安装虚拟环境
+3. pipenv shell 进入虚拟环境(如果报错，则 
+   export LC_ALL=C.UTF-8 
+   export LANG=C.UTF-8
+   )
+4. cleos wallet create -n xxx --to-console
+   (cleos wallet open -n xxx)
+   (cleos wallet unlock -n xxx)
+   cleos wallet import -n xxx --private-key
+   解锁钱包并且导入cryptomeetup账号的私钥
+5. 编辑器打开rawAccountAirdrop.py，在30行把1000 改成空投的总数。（之前是空投1000个）
+6. 把名人站岗的holder信息保存在同一个目录的holder.json
+6. python rawAccountAirdrop.py
