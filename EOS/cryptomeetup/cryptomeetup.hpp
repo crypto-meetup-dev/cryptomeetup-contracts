@@ -10,7 +10,7 @@
 #include <eosiolib/transaction.hpp>
 
 #include "utils.hpp"
-#include "council.hpp"
+#include "council.cpp"
 #include "NFT.hpp"
 // #include <cmath>
 
@@ -21,40 +21,15 @@ using namespace eosio;
 using namespace std;
 using namespace kyubey;
 
-
-
-
 CONTRACT cryptomeetup : public council {
     public:
         cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
         //contract( receiver, code, ds ),
         council( receiver, code, ds ),
         _global( code, uint64_t(eosio::name::raw(code)) ),
-        _market( code, uint64_t(eosio::name::raw(code)) ),
-        _land( code, uint64_t(eosio::name::raw(code)) ),
-        _player( code, uint64_t(eosio::name::raw(code)) ){}
-        
-    ACTION init();
-    ACTION clear();
-    ACTION test();
-    ACTION newland(name &from, asset &eos);    
-
-    ACTION transfer(name from, name to, asset quantity, string memo);    
-    void onTransfer(name from, name to, extended_asset in, string memo); 
-    void buy_land(name from, extended_asset in, const vector<string>& params);
-    void buy(name from, extended_asset in, const vector<string>& params);
-    void sell(name from, extended_asset in, const vector<string>& params);    
-
-    ACTION startnewround() {
-        require_auth(_self);    
-
-        auto g = global{
-            .st = now(),
-            .ed = now() + 60 * 60,
-        };
-        _global.set( g, _self );
-    }  
-
+        _market(receiver, receiver.value),
+        _land(receiver, receiver.value),
+        _player(receiver, receiver.value) {}
 
     /*
     TABLE land {
@@ -71,7 +46,7 @@ CONTRACT cryptomeetup : public council {
     };    
     */
 
-    TABLE land : public NFT::tradeable_token {
+    TABLE land : public NFT::tradeable_NFT {
         //uint64_t parent;
         void tax() {
         }
@@ -87,9 +62,6 @@ CONTRACT cryptomeetup : public council {
         uint64_t ref_profit;
         uint64_t fee_profit;
         uint64_t pool_profit;
-        uint64_t staked_income;
-        uint64_t council_income;
-
         auto primary_key() const {return account;}        
         void withdraw() {
         }
@@ -158,6 +130,19 @@ private:
     }
 };*/
 
+    ACTION init();
+    ACTION clear();
+    ACTION test(); 
+    ACTION newland(name &from, asset &eos);
+    ACTION airdrop(name to, uint64_t amount);
+    ACTION checkin(name from, const checksum256 &hash);
+
+    ACTION transfer(name from, name to, asset quantity, string memo);    
+    void onTransfer(name from, name to, extended_asset in, string memo); 
+    void buy_land(name from, extended_asset in, const vector<string>& params);
+    void buy(name from, extended_asset in, const vector<string>& params);
+    void sell(name from, extended_asset in, const vector<string>& params);     
+
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         auto &thiscontract = *this;
         if (action == name("transfer").value) {
@@ -167,34 +152,9 @@ private:
         }
 
         switch (action) {
-            // EOSIO_DISPATCH_HELPER(payout, (unstake)(refund)(claim) )
+            EOSIO_DISPATCH_HELPER(cryptomeetup, (init)(newland)(unstake)(claim)(refund))
         }
     }
-
-
-    /*
-void cryptomeetup::apply(capi_name code, capi_name action) {   
-    auto &thiscontract = *this;
-    
-    if ( name(action) == "transfer"_n ) {
-        if ( name(code) == "eosio.token"_n ) {
-            auto transfer_data = eosio::unpack_action_data<st_transfer>();
-            onTransfer(transfer_data.from, transfer_data.to,
-                        extended_asset(transfer_data.quantity, name( code ) ),
-                        transfer_data.memo);
-        }
-        return;
-    }
-
-    if (name(code) != _self) return;
-    switch (action) {
-        // old: EOSIO_API(cryptomeetup, (init)(newland));
-//        EOSIO_DISPATCH(cryptomeetup, (init)(clear)(test)(buy)(transfer));
-//        EOSIO_API(cryptomeetup, (init)(clear)(test)(buy)(transfer));
-//        EOSIO_API(cryptomeetup, (init));
-              //  OSIO_API(cryptomeetup, (init));
-    };
-    */
 };
 
 extern "C" {

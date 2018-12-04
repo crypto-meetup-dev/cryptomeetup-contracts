@@ -1,7 +1,49 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Dec  4 06:28:08 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Dec  4 08:47:24 2018",
     "version": "eosio::abi/1.1",
     "structs": [
+        {
+            "name": "NFT",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "airdrop",
+            "base": "",
+            "fields": [
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "checkin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "hash",
+                    "type": "checksum256"
+                }
+            ]
+        },
         {
             "name": "clear",
             "base": "",
@@ -40,7 +82,7 @@
         },
         {
             "name": "land",
-            "base": "tradeable_token",
+            "base": "tradeable_NFT",
             "fields": []
         },
         {
@@ -92,32 +134,13 @@
             ]
         },
         {
-            "name": "startnewround",
-            "base": "",
-            "fields": []
-        },
-        {
             "name": "test",
             "base": "",
             "fields": []
         },
         {
-            "name": "token",
-            "base": "",
-            "fields": [
-                {
-                    "name": "id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "owner",
-                    "type": "name"
-                }
-            ]
-        },
-        {
-            "name": "tradeable_token",
-            "base": "token",
+            "name": "tradeable_NFT",
+            "base": "NFT",
             "fields": [
                 {
                     "name": "price",
@@ -156,6 +179,16 @@
     ],
     "actions": [
         {
+            "name": "airdrop",
+            "type": "airdrop",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "checkin",
+            "type": "checkin",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clear",
             "type": "clear",
             "ricardian_contract": ""
@@ -168,11 +201,6 @@
         {
             "name": "newland",
             "type": "newland",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "startnewround",
-            "type": "startnewround",
             "ricardian_contract": ""
         },
         {
