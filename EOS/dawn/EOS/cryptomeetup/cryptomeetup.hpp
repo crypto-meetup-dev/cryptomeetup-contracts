@@ -166,8 +166,8 @@ void cryptomeetup::apply(account_name code, action_name action) {
 
     if (code != _self) return;
     switch (action) {
-        EOSIO_API(cryptomeetup, (newland));
-        // EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
+        EOSIO_API(cryptomeetup, (init)(newland));
+        //EOSIO_API(cryptomeetup, (init)(newland)(airdrop)(unstake)(claim)(checkin));
     };
 }
 

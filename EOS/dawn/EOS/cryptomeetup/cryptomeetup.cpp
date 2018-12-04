@@ -23,18 +23,21 @@ void cryptomeetup::init() {
     
     for (int i=0;i<250;++i) {
         auto itr = _land.find(i);
-        _land.modify(itr, 0, [&](auto &p) {
+        if (itr != _land.end()) {
+            _land.erase(itr);
+        }
+        /*_land.modify(itr, 0, [&](auto &p) {
             p.owner = N(eosotcbackup);
             p.price = 1000;
-        });
+        });*/
     }
     
-    auto g = _global.get_or_create( _self, global{});
+    //auto g = _global.get_or_create( _self, global{});
     //g.st = 1541332800;
-    g.ed = 1541332801 - 24*3600;
-    g.last = N(blockchainup);
+   // g.ed = 1541332801 - 24*3600;
+  //  g.last = N(blockchainup);
 //    g.pool = 0;
-    _global.set(g, _self);      
+//    _global.set(g, _self);      
     
    // auto g = _global.get_or_create( _self, global{});
   //  g.st = 1540555220;
@@ -73,7 +76,7 @@ void cryptomeetup::init() {
     g.st = 1540555220;
     _global.set(g, _self);   */ 
 
-    //_global.remove();
+    _global.remove();
 
     /*
     if (_market.begin() == _market.end()) {
