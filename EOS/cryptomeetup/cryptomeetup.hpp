@@ -4,47 +4,24 @@
  *  @copyright Andoromeda
  */
 #pragma once
-#include <eosiolib/asset.hpp>
-#include <eosiolib/eosio.hpp>
-#include <eosiolib/singleton.hpp>
-#include <eosiolib/transaction.hpp>
-
-#include "utils.hpp"
 #include "council.cpp"
 #include "NFT.hpp"
-// #include <cmath>
-
-#include "config.hpp"
 #include "kyubey.hpp"
  
-using namespace eosio;
-using namespace std;
-using namespace kyubey;
-
 CONTRACT cryptomeetup : public council {
-    public:
-        cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
-        //contract( receiver, code, ds ),
-        council( receiver, code, ds ),
-        _global( code, uint64_t(eosio::name::raw(code)) ),
-        _market(receiver, receiver.value),
-        _land(receiver, receiver.value),
-        _player(receiver, receiver.value) {}
+public:
+    cryptomeetup( name receiver, name code, datastream<const char*> ds ) :
+    council( receiver, code, ds ),
+    _market(receiver, receiver.value),
+    _land(receiver, receiver.value),
+    _player(receiver, receiver.value) {}
 
-    /*
-    TABLE land {
-        uint64_t     id;
-        name owner = 0;
-        uint64_t primary_key()const { return id; }        
-        uint64_t price;           
-        uint64_t parent;
-        void tax() {
-        }
-        uint64_t next_price() const {
-            return price * 1.35;
-        }
-    };    
-    */
+    TABLE global : public global_info {};
+    TABLE voters : public voter_info {};
+    TABLE refunds : public refund_request {};
+//    TABLE council : public council_info {};
+
+    TABLE market : public kyubey::_market {};
 
     TABLE land : public NFT::tradeable_NFT {
         //uint64_t parent;
@@ -55,9 +32,8 @@ CONTRACT cryptomeetup : public council {
         }
     };
     
-         
     TABLE player {
-        capi_name  account;
+        name  account;
         uint64_t land_profit;
         uint64_t ref_profit;
         uint64_t fee_profit;
@@ -66,70 +42,24 @@ CONTRACT cryptomeetup : public council {
         void withdraw() {
         }
     };
-        
-    TABLE global {       
-        uint64_t team;
-        uint64_t pool;
-        name last;
-        time st, ed;
+
+    TABLE checkin_info {
+        uint64_t event_id;
+        uint64_t primary_key()const { return event_id; }        
     };
 
-    typedef singleton<"global"_n, global> singleton_global;
-    singleton_global _global;       
     typedef eosio::multi_index<"land"_n, land> land_t;
     land_t _land;   
 
-    typedef eosio::multi_index<"player"_n, player> player_t;
+    typedef eosio::multi_index<"players"_n, player> player_t;
     player_t _player;  
   
     typedef eosio::multi_index<"market"_n, market> market_t;
     market_t _market;    
+
+    typedef eosio::multi_index<"checkins"_n, checkin_info> checkin_index;
+
     
-    /*
-    // @abi action
-    void receipt(const rec_reveal& reveal) {
-        require_auth(_self);
-    }
-
-    // @abi table bagsglobal
-    struct bagsglobal {      
-        uint64_t team;
-        uint64_t pool;
-        name last;
-        time st, ed;
-    };
-    typedef singleton<N(bagsglobal), bagsglobal> singleton_bagsglobal;
-    singleton_bagsglobal _bagsglobal;   
-
-    uint64_t get_next_defer_id() {
-    auto g = _global.get();    
-    g.defer_id += 1;
-    _global.set(g,_self);
-        return g.defer_id;
-    }
-
-    template <typename... Args>
-    void send_defer_action(Args&&... args) {
-        transaction trx;
-        trx.actions.emplace_back(std::forward<Args>(args)...);
-        trx.send(get_next_defer_id(), _self, false);
-    }
-
-  
-  // @abi action
-  void setslogan(name &from, uint64_t id,string memo);
-  */
-
- /*
-private:
-    void countdownrest() {
-        require_auth(_self);
-        auto g = _global.get();                     
-        g.ed = now() + 60 * 60;
-        _global.set(g, _self);
-    }
-};*/
-
     ACTION init();
     ACTION clear();
     ACTION test(); 
