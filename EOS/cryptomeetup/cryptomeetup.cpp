@@ -46,7 +46,11 @@ void cryptomeetup::init() {
 }
 
 void cryptomeetup::clear() {
-    require_auth(_self);    
+    require_auth(_self);  
+    /* 
+    auto itr = _portal.begin();
+    _portal.erase( itr );
+    */
 }
 
 void cryptomeetup::test() {
