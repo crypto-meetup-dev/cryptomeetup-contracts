@@ -39,6 +39,9 @@ void council::unstake(name from, asset delta) {
     v.staked -= delta;
     _voters.set(v, _self);   
 
+    g.total_staked -= delta;
+    _global.set(g, _self);
+
     singleton_council _council(_self, v.to.value);
     if (_council.exists()) {
         auto c = _council.get();
@@ -47,11 +50,12 @@ void council::unstake(name from, asset delta) {
     }
 
     singleton_refunds _refunds( _self, from.value );
-    auto req = _refunds.get_or_create(_self, refund_request{.amount = asset(0, EOS_SYMBOL)});
+    auto req = _refunds.get_or_create(_self, refund_request{.amount = asset(0, TOKEN_SYMBOL)});
     req.request_time = now();
     req.amount += delta;
-    send_defer_refund_action(from);
     _refunds.set(req, _self);
+
+    send_defer_refund_action(from);
 }
 
 void council::claim(name from) {
@@ -84,16 +88,16 @@ void council::refund(name from) {
     singleton_refunds refunds_tbl( _self, from.value );
     eosio_assert( refunds_tbl.exists(), "refund request not found" );
     auto req = refunds_tbl.get();
-    eosio_assert( req.request_time + refund_delay <= now(), "refund is not available yet" );
-    
+
+    // eosio_assert( req.request_time + refund_delay >= now(), "refund is not available yet" );
     // Until now() becomes NOW, the fact that now() is the timestamp of the previous block could in theory
     // allow people to get their tokens earlier than the 1 day delay if the unstake happened immediately after many
     // consecutive missed blocks.
 
     action(
         permission_level{_self, "active"_n},
-        EOS_CONTRACT, "transfer"_n,
-        make_tuple(_self, from, req.amount, "unstake refund")
+        TOKEN_CONTRACT, "transfer"_n,
+        make_tuple(_self, from, req.amount, string("unstake refund"))
     ).send();
 
     refunds_tbl.remove();

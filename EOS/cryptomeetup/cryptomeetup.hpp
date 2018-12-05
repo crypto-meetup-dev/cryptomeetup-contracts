@@ -101,6 +101,7 @@ public:
         council::unvote(from);
     }
 
+    ACTION newportal(name from, uint64_t amount, uint64_t id, const vector<string>& params);
     ACTION newland(name from, asset eos);
     ACTION airdrop(name to, asset eos);
     ACTION checkin(name from, const checksum256 &hash);
@@ -130,6 +131,7 @@ public:
                 (vote)
                 (unvote)
                 (newland)
+                (newportal)
                 (airdrop)
                 (checkin)
             )

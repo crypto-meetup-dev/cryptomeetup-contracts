@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 19:17:37 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 21:50:30 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -156,6 +156,28 @@
                 {
                     "name": "eos",
                     "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "newportal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint64"
+                },
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "params",
+                    "type": "string[]"
                 }
             ]
         },
@@ -410,6 +432,11 @@
         {
             "name": "newland",
             "type": "newland",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newportal",
+            "type": "newportal",
             "ricardian_contract": ""
         },
         {

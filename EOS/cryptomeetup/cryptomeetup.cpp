@@ -8,11 +8,21 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
-    auto g = _global.get_or_create( _self, global{});    
+/*    auto g = _global.get_or_create( _self, global{});    
     g.st = now();
     g.ed = now() + 7*24*60*60;
     g.total_staked = asset(0, TOKEN_SYMBOL);
-    _global.set(g, _self);
+    _global.set(g, _self);*/
+
+    auto st = _land.available_primary_key();
+    for (int i=st;i<st+20;++i) {
+        auto from = "eosotcbackup"_n;
+        _land.emplace(from, [&](auto &p) {
+            p.id = _land.available_primary_key();
+            p.owner = from;
+            p.price = 10000;
+        });
+    }    
 
     /*    
     while (_market.begin() != _market.end()) {
@@ -51,10 +61,48 @@ void cryptomeetup::airdrop(name from, asset eos) {
     require_auth(_self);    
 }
 
+void cryptomeetup::newportal(name from, uint64_t amount, uint64_t id, const vector<string>& params) {
+    require_auth(_self);
+
+    eosio_assert(amount >= 1000, "The portal is at least 0.1 eos");
+
+    eosio_assert(params.size() == 6, "need 5 params");
+    auto creator_fee = string_to_price(params[1]);
+    auto ref_fee = string_to_price(params[2]);
+    auto k = string_to_price(params[3]);
+    auto price = string_to_price(params[4]);
+    auto st = string_to_price(params[5]);
+    eosio_assert(creator_fee <= 1000, "illegal creator_fee");
+    eosio_assert(ref_fee <= 1000, "illegal ref_fee");
+    eosio_assert(creator_fee + ref_fee <= 1000, "illegal sum of fee");
+    eosio_assert(k >= 10 && k <= 1000, "illegal k");
+    eosio_assert(price >= 1000 && price <= 10000000, "illegal initial price");
+    if (st < now()) {
+        st = now();
+    }
+    eosio_assert(st >= now() && st <= now() + 3652460 * 60, "illegal st");
+
+    _portal.emplace(_self, [&](auto &s) {
+        s.id = id;
+        s.creator = from;
+        s.owner = from;
+        s.creator_fee = creator_fee;
+        s.ref_fee = ref_fee;
+        s.k = k;
+        s.price = price;
+        s.st = st;
+//        s.last_anti_bot_fee = 0;
+//        s.anti_bot_fee = 500;
+//        s.anti_bot_timer = 5*60*60;
+//        s.last_buy_timer = 0;
+    });
+}
+
+
 void cryptomeetup::newland(name from, asset eos) {
     require_auth(_self);
     auto st = _land.available_primary_key();
-    for (int i=st;i<st+50;++i) {
+    for (int i=st;i<st+20;++i) {
         _land.emplace(from, [&](auto &p) {
             p.id = _land.available_primary_key();
             p.owner = from;
