@@ -6,7 +6,9 @@
 #include "cryptomeetup.hpp"
 
 void cryptomeetup::init() {
-    require_auth(_self);    
+    require_auth(_self);   
+
+
 
     /*    
     while (_market.begin() != _market.end()) {
@@ -30,8 +32,26 @@ void cryptomeetup::init() {
     }*/
 }
 
-void cryptomeetup::newland(name &from, asset &eos) {
-//    require_auth(_self);
+void cryptomeetup::clear() {
+    require_auth(_self);    
+}
+
+void cryptomeetup::test() {
+    require_auth(_self);    
+}
+
+void cryptomeetup::checkin(name from, const checksum256 &hash) {
+    require_auth(_self);    
+}
+
+void cryptomeetup::airdrop(name from, asset eos) {
+    require_auth(_self);    
+}
+
+
+
+void cryptomeetup::newland(name from, asset eos) {
+    require_auth(_self);
     for (int i=0;i<4;++i) {
 
 /*

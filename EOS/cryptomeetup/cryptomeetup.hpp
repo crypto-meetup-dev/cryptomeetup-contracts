@@ -63,8 +63,25 @@ public:
     ACTION init();
     ACTION clear();
     ACTION test(); 
-    ACTION newland(name &from, asset &eos);
-    ACTION airdrop(name to, uint64_t amount);
+
+    ACTION unstake(name from, asset delta) {
+        council::unstake(from, delta);
+    }
+    ACTION claim(name from) {
+        council::claim(from);
+    }  
+    ACTION refund(name from) {
+        council::refund(from);
+    }      
+    ACTION vote(name from, name to) {
+        council::vote(from, to);
+    }
+    ACTION unvote(name from) {
+        council::unvote(from);
+    }
+
+    ACTION newland(name from, asset eos);
+    ACTION airdrop(name to, asset eos);
     ACTION checkin(name from, const checksum256 &hash);
 
     ACTION transfer(name from, name to, asset quantity, string memo);    
@@ -82,7 +99,19 @@ public:
         }
 
         switch (action) {
-            EOSIO_DISPATCH_HELPER(cryptomeetup, (init)(newland)(unstake)(claim)(refund))
+            EOSIO_DISPATCH_HELPER(cryptomeetup, 
+                (init)
+                (clear)
+                (test)
+                (unstake)
+                (claim)
+                (refund)
+                (vote)
+                (unvote)
+                (newland)
+                (airdrop)
+                (checkin)
+            )
         }
     }
 };
