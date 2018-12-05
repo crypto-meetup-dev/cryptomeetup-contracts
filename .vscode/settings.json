@@ -28,6 +28,7 @@
         "stdexcept": "cpp",
         "system_error": "cpp",
         "__string": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "atomic": "cpp"
     }
 }

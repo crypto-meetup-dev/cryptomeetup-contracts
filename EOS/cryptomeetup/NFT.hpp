@@ -23,20 +23,16 @@ namespace NFT {
     void create(name from) {
     }
 
-    void transfer(name from, name to) {
-    }
-
-    void buy(name from) {
-        
-    }
-
-    struct token {
-        uint64_t     id;
+    struct NFT {
+        uint64_t id;
         name owner;
         uint64_t primary_key()const { return id; }
+        void transfer(name to) {
+            owner = to;
+        }
     };    
 
-    struct tradeable_token : public token {
+    struct tradeable_NFT : public NFT {
         uint64_t price;        
     };
 };

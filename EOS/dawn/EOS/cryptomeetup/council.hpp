@@ -9,7 +9,7 @@
 // #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 #include "config.hpp"
-static constexpr time refund_delay = 3*24*3600;
+static constexpr time refund_delay = 1*24*3600;
 
 typedef double real_type;
 

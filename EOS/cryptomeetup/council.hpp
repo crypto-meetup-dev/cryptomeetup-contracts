@@ -4,7 +4,6 @@
  */
 #pragma once
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/asset.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/transaction.hpp>
 #include "utils.hpp"
@@ -22,10 +21,19 @@ using std::string;
 CONTRACT council : public contract {
 public:
     council( name receiver, name code, datastream<const char*> ds ) :
-        contract(receiver, code, ds),
-//        _proxies(receiver, receiver.value),
-        _council(receiver, receiver.value) {
+        contract(receiver, code, ds),        
+        _global(receiver, receiver.value) {
     }
+
+    TABLE global_info {
+        uint64_t defer_id;
+        asset    total_staked;
+        uint128_t earnings_per_share;
+
+        name last;
+        time st, ed;
+        uint64_t pool;
+    };    
 
     TABLE voter_info {
         name     to;
@@ -34,13 +42,8 @@ public:
     };
 
     TABLE refund_request {
-        uint32_t request_time;
+        time request_time;
         asset    amount;
-    };    
-
-    TABLE global_info {
-        uint64_t defer_id;
-        asset    total_staked;
     };    
 
     /*
@@ -53,24 +56,46 @@ public:
     };*/
 
     TABLE council_info {
-        name owner ; /// the voter
-        name council; /// the producers approved by this voter if no proxy set
-        uint64_t     total_votes ;
-        uint64_t     unpaid ;          // 距离上次领取分红后未领取的分红
-        time         last_vote_time;  // 上次领取分红的时间
+        int64_t     total_votes;
+        int64_t     unpaid;
+    };  
 
-        auto primary_key()const { return owner; }
-    };          
-
+    typedef singleton<"global"_n, global_info> singleton_global;
     typedef singleton<"voters"_n, voter_info> singleton_voters;
     typedef singleton<"refunds"_n, refund_request> singleton_refunds;
+    // typedef singleton<"proxies"_n, proxy_info> singleton_proxies;
+    typedef singleton<"council"_n, council_info> singleton_council;
+
+    singleton_global _global;
+
+    uint64_t get_next_defer_id() {
+        auto g = _global.get();    
+        g.defer_id += 1;
+        _global.set(g,_self);
+        return g.defer_id;
+    }
+
+    void send_defer_refund_action(name from) {
+        transaction out;
+        out.actions.emplace_back(permission_level{ from, "active"_n }, _self, "refund"_n, from);
+        out.delay_sec = refund_delay;         
+        cancel_deferred(from.value); // TODO: Remove this line when replacing deferred trxs is fixed
+        out.send(from.value, from, true);
+    }
+
+    template <typename... Args>
+    void send_defer_action(Args&&... args) {
+        transaction trx;
+        trx.actions.emplace_back(std::forward<Args>(args)...);
+        trx.send(get_next_defer_id(), _self, false);
+    }    
+
+
     // typedef eosio::multi_index<"proxies"_n, proxy_info>  proxies_t;
-    typedef eosio::multi_index<"council"_n, council_info>  council_t;    
+    // typedef eosio::multi_index<"council"_n, council_info>  council_t;    
 //    proxies_t _proxies;
-    council_t _council;
+ //   council_t _council;
 
-
-    void stake(name from, uint64_t delta) {
         /*
         require_auth(from);
         eosio_assert(delta == 0, "must stake a positive amount");
@@ -89,22 +114,9 @@ public:
             _voters.emplace(_code, [&](auto &v) {
                 v.owner = from;
                 v.staked += delta;
-            });
-            
+            });            
         }*/
-    }
-
-    void unstake(name from) {
-        /*
-        require_auth(from);
-        auto itr = _voters.find(from);
-        eosio_assert(itr != _voters.end(), "voter doesn't exist");
-        unvote(itr); 
-        _voters.modify(itr, _code, [&](auto &v) {
-            v.staked = 0;
-        });*/
-        // todo(minakokojima): add unstake event.
-    }    
+  //  }
 
     /*
     void unvote( voters_t::const_iterator itr  ) {
@@ -143,22 +155,6 @@ public:
         }
         */
     }
-
-    void unvote(name from) {
-        /*
-        require_auth(from);        
-        auto v = _voters.find(from);
-        if (v != _voters.end()) {
-            unvote(v);
-            return;
-        }
-        auto p = _proxies.find(from);
-        if (p != _proxies.end()) {
-            unvote(p);     
-            return;
-        }*/
-    }
-
 /*
     void vote(voters_t::const_iterator itr) {
         unvote(itr);
@@ -198,70 +194,6 @@ public:
         
     }    
 */
-    void vote(name from, name to) {    
-        /*    
-        require_auth(from);
-        auto v = _voters.find(from);
-        if (v != _voters.end()) {                   
-            _voters.modify(v, _code, [&](auto &vv) {
-                vv.to = to;
-            });    
-            vote(v);
-            return;
-        }
-
-        auto p = _proxies.find(from);
-        if (p != _proxies.end()) {
-            _voters.modify(v, _code, [&](auto &vv) {
-                vv.to = to;
-            });    
-            vote(v);
-            return;
-        }*/
-    }
-
-
-    ACTION refund(name from) {
-        require_auth( from );
-        
-        singleton_refunds refunds_tbl( _self, from.value );
-        eosio_assert( refunds_tbl.exists(), "refund request not found" );
-        auto req = refunds_tbl.get();
-        eosio_assert( req.request_time + refund_delay <= now(), "refund is not available yet" );
-        
-        // Until now() becomes NOW, the fact that now() is the timestamp of the previous block could in theory
-        // allow people to get their tokens earlier than the 1 day delay if the unstake happened immediately after many
-        // consecutive missed blocks.
-
-        action(
-            permission_level{_self, "active"_n},
-            EOS_CONTRACT, "transfer"_n,
-            make_tuple(_self, from, req.amount, "unstake refund")
-        ).send();
-
-        refunds_tbl.remove();
-    }    
-
-    // 申明自己参与代理
-    void runproxy(name from) {
-        /*
-        require_auth(from);
-
-        // warning!!!
-        // 申明成为代理需要哪些条件？
-        // warning!!!
-
-        auto itr_proxy = _proxies.find(from);
-        eosio_assert(itr_proxy != _proxies.end(), "already be proxy");
-        _proxies.emplace(_self, [&](auto &p) {
-            p.owner = from;
-        });
-
-        // warning!!!
-        // 打出event, 让前端知道
-        // warning!!!
-    }    
-
     // 申明自己参与委员会
     void runcouncil(name from) {
         require_auth(from);
@@ -270,16 +202,19 @@ public:
         // 申明成为委员会需要哪些条件？
         // warning!!!
         
-        auto itr_council = _council.find(from);
-        eosio_assert(itr_council != _council.end(), "already be council");
-        _council.emplace(_self, [&](auto &c) {
-            c.owner = from;
-        });
-
-
-        // warning!!!
-        // 打出event, 让前端知道
-        // warning!!!
-    */
+        singleton_council _council(_self, from.value);
+        auto c = _council.get_or_create(_self, council_info{});
+        _council.set(c, _self);     
     }
+
+    ACTION init();
+    ACTION unstake(name from, asset delta);
+    ACTION claim(name from);    
+    ACTION refund(name from);    
+    ACTION vote(name from, name to);
+    ACTION unvote(name from);
+    ACTION transfer(name from, name to, asset quantity, string memo);
+    void onTransfer(name from, name to, extended_asset in, string memo);
+    void stake(name from, asset delta);
+    void make_profit(uint64_t delta);
 };

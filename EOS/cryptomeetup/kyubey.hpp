@@ -10,62 +10,15 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/asset.hpp>
 #include <eosiolib/contract.hpp>
-#include <eosiolib/transaction.hpp>
-
 #include <cmath>
 #include "utils.hpp"
 typedef double real_type;
 
-using eosio::asset;
-using eosio::symbol_code;
-using eosio::action;
-using eosio::permission_level;
-
 const uint64_t K = 10000000000;
 
 namespace kyubey {
-
-    /*
-    void buy(account_name account, asset in) {    
-        asset out;
-        _market.modify(_market.begin(), 0, [&](auto &m) {
-            out = m.buy(in.amount);
-        }); 
-
-        // static char msg[20];
-        // sprintf(msg, "delta: %llu", out.amount);
-        // eosio_assert(false, msg);
-        
-        // issue(account, out, "");
-        if (out.amount > 0){
-            action(
-                permission_level{_self, N(active)},
-                N(dacincubator), N(transfer),
-                make_tuple(_self, account, out, std::string("buy some new token"))
-            ).send();    
-        }        
-    }
-
-    void sell(account_name account, asset in) {            
-        //sub_balance(account, in);          
-        asset out;
-        _market.modify(_market.begin(), 0, [&](auto &m) {
-            out = m.sell(in.amount);
-        });    
-        
-        if (out.amount > 0){
-            action(
-                permission_level{_self, N(active)},
-                N(eosio.token), N(transfer),
-                make_tuple(_self, account, out, std::string(""))
-            ).send();
-        }
-    }*/
-
-    // @abi table market i64
-    struct market {
+    struct _market {
         uint64_t id = 0;        
         asset supply;
         asset balance;
