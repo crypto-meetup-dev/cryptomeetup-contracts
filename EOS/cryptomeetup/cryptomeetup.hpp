@@ -14,6 +14,7 @@ public:
     council( receiver, code, ds ),
     _market(receiver, receiver.value),
     _land(receiver, receiver.value),
+    _portal(receiver, receiver.value),    
     _player(receiver, receiver.value) {}
 
     TABLE global : public global_info {};
@@ -24,16 +25,34 @@ public:
     TABLE market : public kyubey::_market {};
 
     TABLE land : public NFT::tradeable_NFT {
-        //uint64_t parent;
-        void tax() {
-        }
         uint64_t next_price() const {
             return price * 1.35;
         }
     };
+
+    TABLE portal : public land {
+        uint64_t parent;
+        name creator;
+        name owner;
+        uint64_t creator_fee;
+        uint64_t ref_fee;
+        uint64_t k;        
+        uint64_t price;
+        uint64_t last_anti_bot_fee;
+        uint64_t anti_bot_init_fee;
+        time anti_bot_timer;
+        time last_buy_timer;        
+        time st;
+        uint64_t primary_key()const { return id; }
+        uint64_t next_price() const {
+            return price * k / 1000;
+        }
+    };    
     
     TABLE player {
         name  account;
+        uint64_t portal_approved;
+        uint64_t meetup_attended;
         uint64_t land_profit;
         uint64_t ref_profit;
         uint64_t fee_profit;
@@ -50,6 +69,8 @@ public:
 
     typedef eosio::multi_index<"land"_n, land> land_t;
     land_t _land;   
+    typedef eosio::multi_index<"portal"_n, portal> portal_t;
+    portal_t _portal;    
 
     typedef eosio::multi_index<"players"_n, player> player_t;
     player_t _player;  

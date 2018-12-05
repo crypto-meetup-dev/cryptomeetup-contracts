@@ -24,7 +24,7 @@ namespace NFT {
     }
 
     struct NFT {
-        uint64_t     id;
+        uint64_t id;
         name owner;
         uint64_t primary_key()const { return id; }
         void transfer(name to) {

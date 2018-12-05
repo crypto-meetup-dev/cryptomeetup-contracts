@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 14:06:55 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 17:14:48 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -168,6 +168,14 @@
                     "type": "name"
                 },
                 {
+                    "name": "portal_approved",
+                    "type": "uint64"
+                },
+                {
+                    "name": "meetup_attended",
+                    "type": "uint64"
+                },
+                {
                     "name": "land_profit",
                     "type": "uint64"
                 },
@@ -182,6 +190,60 @@
                 {
                     "name": "pool_profit",
                     "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "portal",
+            "base": "land",
+            "fields": [
+                {
+                    "name": "parent",
+                    "type": "uint64"
+                },
+                {
+                    "name": "creator",
+                    "type": "name"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
+                },
+                {
+                    "name": "creator_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ref_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "k",
+                    "type": "uint64"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "last_anti_bot_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "anti_bot_init_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "anti_bot_timer",
+                    "type": "time"
+                },
+                {
+                    "name": "last_buy_timer",
+                    "type": "time"
+                },
+                {
+                    "name": "st",
+                    "type": "time"
                 }
             ]
         },
@@ -413,6 +475,13 @@
         {
             "name": "players",
             "type": "player",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "portal",
+            "type": "portal",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
