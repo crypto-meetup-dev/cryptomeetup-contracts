@@ -33,11 +33,11 @@ public:
     TABLE portal : public land {
         uint64_t parent;
         name creator;
-        name owner;
+        name owner; //！
         uint64_t creator_fee;
         uint64_t ref_fee;
         uint64_t k;        
-        uint64_t price;
+        uint64_t price; //！
         uint64_t last_anti_bot_fee;
         uint64_t anti_bot_init_fee;
         time anti_bot_timer;

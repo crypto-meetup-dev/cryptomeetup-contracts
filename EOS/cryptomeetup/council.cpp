@@ -65,7 +65,7 @@ void council::claim(name from) {
     auto g = _global.get();
 
     // TODO(minakokojima): unvote(v);
-    auto delta = asset(0, EOS_SYMBOL);
+    auto delta = asset(0, TOKEN_SYMBOL);
     auto raw_council = g.earnings_per_share * v.staked.amount / MAGNITUDE;
     if (raw_council > v.payout) delta.amount = raw_council - v.payout;
 
@@ -75,7 +75,7 @@ void council::claim(name from) {
     if (delta.amount > 0) {
         action(
             permission_level{_self, "active"_n},
-            EOS_CONTRACT, "transfer"_n,
+            TOKEN_CONTRACT, "transfer"_n,
             make_tuple(_self, from, delta,
                 string("claim dividend."))
         ).send();        
