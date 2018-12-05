@@ -61,17 +61,11 @@ void cryptomeetup::airdrop(name from, asset eos) {
     require_auth(_self);    
 }
 
-void cryptomeetup::newportal(name from, uint64_t amount, uint64_t id, const vector<string>& params) {
+void cryptomeetup::newportal(name from, uint64_t id, uint64_t parent_id, 
+    uint64_t creator_fee, uint64_t ref_fee, 
+    uint64_t k, uint64_t price, uint64_t st) {
+
     require_auth(_self);
-
-    eosio_assert(amount >= 1000, "The portal is at least 0.1 eos");
-
-    eosio_assert(params.size() == 6, "need 5 params");
-    auto creator_fee = string_to_price(params[1]);
-    auto ref_fee = string_to_price(params[2]);
-    auto k = string_to_price(params[3]);
-    auto price = string_to_price(params[4]);
-    auto st = string_to_price(params[5]);
     eosio_assert(creator_fee <= 1000, "illegal creator_fee");
     eosio_assert(ref_fee <= 1000, "illegal ref_fee");
     eosio_assert(creator_fee + ref_fee <= 1000, "illegal sum of fee");
@@ -84,6 +78,7 @@ void cryptomeetup::newportal(name from, uint64_t amount, uint64_t id, const vect
 
     _portal.emplace(_self, [&](auto &s) {
         s.id = id;
+        s.parent = parent_id;
         s.creator = from;
         s.owner = from;
         s.creator_fee = creator_fee;
