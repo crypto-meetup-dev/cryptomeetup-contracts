@@ -28,7 +28,7 @@ public:
     TABLE global_info {
         uint64_t defer_id;
         asset    total_staked;
-        int128_t earnings_per_share;
+        uint128_t earnings_per_share;
 
         name last;
         time st, ed;

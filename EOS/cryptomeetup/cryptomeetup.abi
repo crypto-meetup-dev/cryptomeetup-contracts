@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 17:14:48 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Dec  5 19:17:37 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -110,7 +110,7 @@
                 },
                 {
                     "name": "earnings_per_share",
-                    "type": "int128"
+                    "type": "uint128"
                 },
                 {
                     "name": "last",

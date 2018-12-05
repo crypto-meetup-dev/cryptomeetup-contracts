@@ -144,8 +144,8 @@ void council::onTransfer(name from, name to, extended_asset in, string memo) {
     }    
     
     if (params[0] == "make_profit") {
-        eosio_assert(in.contract == EOS_CONTRACT, "must use true EOS to make profit");
-        eosio_assert(in.quantity.symbol == EOS_SYMBOL, "must use EOS to make profit");
+        eosio_assert(in.contract == TOKEN_CONTRACT, "must use true target TOKEN to make profit");
+        eosio_assert(in.quantity.symbol == TOKEN_SYMBOL, "must use target TOKEN to make profit");
         make_profit(in.quantity.amount);
         return;
     }
