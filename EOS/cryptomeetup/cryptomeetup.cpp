@@ -131,7 +131,7 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
         permission_level{_self, "active"_n},
         "eosio.token"_n, "transfer"_n,
         make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-            std::string("transfer ownership"))
+            std::string("exceed eos transfer."))
     ).send();    
 
 
@@ -189,6 +189,53 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     // countdownrest() ;    
 }
 
+void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>& params) {
+    
+    auto g = _global.get();
+    eosio_assert( g.st <= now() && now() <= g.ed, "not correct time...");
+    eosio_assert(in.contract == EOS_CONTRACT, "only true EOS token is allowed");
+    eosio_assert(in.quantity.symbol == EOS_SYMBOL, "only true EOS token is allowed...");
+    
+    eosio_assert(params.size() >= 2, "No ID found.");
+    auto id = string_to_price(params[1]);
+
+    auto itr = _portal.find(id);
+    eosio_assert(itr != _portal.end(), "no portal exist");
+    eosio_assert(in.quantity.amount >= itr->next_price(), "no enough eos");
+    eosio_assert(from != itr->owner, "cannot buy with yourself");
+
+    auto exceed = in.quantity.amount - itr->next_price();
+
+    action(
+        permission_level{_self, "active"_n},
+        "eosio.token"_n, "transfer"_n,
+        make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
+            std::string("exceed eos transfer."))
+    ).send();    
+
+
+    auto delta = itr->next_price() - itr->price;
+    delta /= 2;    
+    if (delta > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, itr->owner, asset(itr->price + delta, EOS_SYMBOL),
+                std::string("transfer ownership"))
+        ).send();       
+    } 
+
+    council::make_profit(delta);
+
+
+    _portal.modify(itr, get_self(), [&](auto &p) {
+        p.owner = from;
+        p.price = itr->next_price();
+    });
+
+    // countdownrest() ;    
+}
+
 void cryptomeetup::buy(name from, extended_asset in, const vector<string>& params) {
 
     eosio_assert(in.contract == EOS_CONTRACT, "only true EOS token is allowed");
@@ -239,6 +286,11 @@ void cryptomeetup::onTransfer(name from, name to, extended_asset in, string memo
 
     if (params[0] == "buy_land") {
         buy_land(from, in, params);
+        return;
+    }
+
+    if (params[0] == "buy_portal") {
+        buy_portal(from, in, params);
         return;
     }
 

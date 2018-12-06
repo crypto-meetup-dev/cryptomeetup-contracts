@@ -107,6 +107,7 @@ public:
     ACTION transfer(name from, name to, asset quantity, string memo);    
     void onTransfer(name from, name to, extended_asset in, string memo); 
     void buy_land(name from, extended_asset in, const vector<string>& params);
+    void buy_portal(name from, extended_asset in, const vector<string>& params);
     void buy(name from, extended_asset in, const vector<string>& params);
     void sell(name from, extended_asset in, const vector<string>& params);     
 
