@@ -8,12 +8,11 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
-/*    auto g = _global.get_or_create( _self, global{});    
-    g.st = now();
-    g.ed = now() + 7*24*60*60;
-    g.total_staked = asset(0, TOKEN_SYMBOL);
-    _global.set(g, _self);*/
+    auto g = _global.get_or_create( _self, global{});    
+    g.ed = now() + 30*24*60*60;
+    _global.set(g, _self);
 
+    /*
     auto st = _land.available_primary_key();
     for (int i=st;i<st+20;++i) {
         auto from = "eosotcbackup"_n;
@@ -22,7 +21,8 @@ void cryptomeetup::init() {
             p.owner = from;
             p.price = 10000;
         });
-    }    
+    }
+    */
 
     /*    
     while (_market.begin() != _market.end()) {
@@ -70,9 +70,9 @@ void cryptomeetup::newportal(name from, uint64_t id, uint64_t parent_id,
     uint64_t k, uint64_t price, uint64_t st) {
 
     require_auth(_self);
-    eosio_assert(creator_fee <= 1000, "illegal creator_fee");
-    eosio_assert(ref_fee <= 1000, "illegal ref_fee");
-    eosio_assert(creator_fee + ref_fee <= 1000, "illegal sum of fee");
+    eosio_assert(creator_fee < 950, "illegal creator_fee");
+    eosio_assert(ref_fee < 950, "illegal ref_fee");
+    eosio_assert(creator_fee + ref_fee < 950, "illegal sum of fee");
     eosio_assert(k >= 10 && k <= 1000, "illegal k");
     eosio_assert(price >= 1000 && price <= 10000000, "illegal initial price");
     if (st < now()) {
@@ -127,27 +127,61 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
 
     auto exceed = in.quantity.amount - itr->next_price();
 
-    action(
-        permission_level{_self, "active"_n},
-        "eosio.token"_n, "transfer"_n,
-        make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-            std::string("exceed eos transfer."))
-    ).send();    
-
-
-    auto delta = itr->next_price() - itr->price;
-    delta /= 2;    
-    if (delta > 0) {
+    if ( exceed > 0) {
         action(
             permission_level{_self, "active"_n},
             "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, itr->owner, asset(itr->price + delta, EOS_SYMBOL),
+            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
+                std::string("exceed eos transfer."))
+        ).send();         
+    }
+   
+    auto delta = itr->next_price() - itr->price;
+
+    auto to_owner = delta * 60 / 100;
+    if (itr->price + to_owner > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, itr->owner, asset(itr->price + to_owner, EOS_SYMBOL),
                 std::string("transfer ownership"))
         ).send();       
     } 
 
-    council::make_profit(delta);
+    auto to_dividend_pool = delta * 27 / 100;
+    council::make_profit(to_dividend_pool);
     
+    uint64_t to_ref = 0;
+    if (params.size() >= 3) {
+        to_ref = delta * 3 / 100;
+        asset out_ref;
+        _market.modify(_market.begin(), _self, [&](auto &m) {
+            out_ref = m.buy(to_ref);
+        });         
+        auto ref = name(params[2]);
+        if (is_account(ref) && ref != from) {   
+            if (out_ref.amount > 0) {
+            action(
+                permission_level{_self, "active"_n},
+                TOKEN_CONTRACT, "transfer"_n,
+                make_tuple(_self, ref, out_ref,
+                            std::string("mining token by reference")))
+                .send();
+            }
+        } 
+    }
+
+    auto to_prize_pool = delta - to_owner - to_dividend_pool - to_ref;
+    asset out_pool;
+    _market.modify(_market.begin(), _self, [&](auto &m) {
+        out_pool = m.buy(to_prize_pool);
+    });
+    g.pool += out_pool.amount;
+    g.last = from;
+
+    g.ed += itr->next_price() * 60 / 10000;
+    _global.set(g, _self);       
+
     // mining...
     /*
     asset out;
@@ -206,26 +240,59 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
 
     auto exceed = in.quantity.amount - itr->next_price();
 
-    action(
-        permission_level{_self, "active"_n},
-        "eosio.token"_n, "transfer"_n,
-        make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-            std::string("exceed eos transfer."))
-    ).send();    
-
+    if (exceed > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
+                std::string("exceed eos transfer."))
+        ).send();   
+    }
 
     auto delta = itr->next_price() - itr->price;
-    delta /= 2;    
+
+    auto to_dividend_pool = delta * 5 / 100;
+    council::make_profit(to_dividend_pool);
+
+    uint64_t to_ref = 0; 
+    if (params.size() >= 3) {
+        to_ref = delta * itr->ref_fee / 1000;
+        asset out_ref;
+        _market.modify(_market.begin(), _self, [&](auto &m) {
+            out_ref = m.buy(to_ref);
+        });         
+        auto ref = name(params[2]);
+        if (is_account(ref) && ref != from) {   
+            if (out_ref.amount > 0) {
+            action(
+                permission_level{_self, "active"_n},
+                TOKEN_CONTRACT, "transfer"_n,
+                make_tuple(_self, ref, out_ref,
+                            std::string("mining token by reference")))
+                .send();
+            }
+        } 
+    }
+
+    auto to_creator = delta * itr->creator_fee / 1000;
+    if (to_creator > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, itr->creator, asset(to_creator, EOS_SYMBOL),
+                std::string("transfer ownership fee for creator"))
+        ).send();         
+    }
+
+    auto to_owner = delta - to_dividend_pool - to_ref - to_creator;
     if (delta > 0) {
         action(
             permission_level{_self, "active"_n},
             "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, itr->owner, asset(itr->price + delta, EOS_SYMBOL),
+            make_tuple(_self, itr->owner, asset(itr->price + to_owner, EOS_SYMBOL),
                 std::string("transfer ownership"))
         ).send();       
     } 
-
-    council::make_profit(delta);
 
 
     _portal.modify(itr, get_self(), [&](auto &p) {
