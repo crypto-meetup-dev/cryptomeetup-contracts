@@ -43,7 +43,7 @@ public:
         time st;
         uint64_t primary_key()const { return id; }
         uint64_t next_price() const {
-            return price * k / 1000;
+            return price * (k + 1000) / 1000;
         }
     };    
     

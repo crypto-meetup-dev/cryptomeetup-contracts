@@ -127,14 +127,15 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
 
     auto exceed = in.quantity.amount - itr->next_price();
 
-    action(
-        permission_level{_self, "active"_n},
-        "eosio.token"_n, "transfer"_n,
-        make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-            std::string("exceed eos transfer."))
-    ).send();    
-
-
+    if ( exceed > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
+                std::string("exceed eos transfer."))
+        ).send();         
+    }
+   
     auto delta = itr->next_price() - itr->price;
     delta /= 2;    
     if (delta > 0) {
@@ -206,6 +207,14 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
 
     auto exceed = in.quantity.amount - itr->next_price();
 
+    if (exceed > 0) {
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
+                std::string("exceed eos transfer."))
+        ).send();   
+    }
     action(
         permission_level{_self, "active"_n},
         "eosio.token"_n, "transfer"_n,
