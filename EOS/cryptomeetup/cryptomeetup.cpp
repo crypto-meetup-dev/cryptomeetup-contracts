@@ -139,88 +139,57 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     auto delta = itr->next_price() - itr->price;
 
     auto to_owner = delta * 60 / 100;
-    if (itr->price + to_owner > 0) {
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, itr->owner, asset(itr->price + to_owner, EOS_SYMBOL),
-                std::string("transfer ownership"))
-        ).send();       
-    } 
+    auto itr_owner = _player.find((itr->owner).value);
+    if (itr_owner == _player.end()) {
+        _player.emplace(from, [&](auto &p) {
+            p.account = itr->owner.value;
+            p.land_profit = itr->price + to_owner;
+        });
+    } else {
+        _player.modify(itr_owner, from, [&](auto &p) {
+            p.land_profit += itr->price + to_owner;
+        });
+    }
 
-    auto to_dividend_pool = delta * 27 / 100;
-    council::make_profit(to_dividend_pool);
-    
-    uint64_t to_ref = 0;
+    delta -= to_owner;
+    asset out;
+    _market.modify(_market.begin(), _self, [&](auto &m) {
+        out = m.buy(delta);
+    });
+
+    asset to_prize_pool = out * 10 / 40;
+    g.pool += to_prize_pool.amount;
+
+    asset to_ref;
     if (params.size() >= 3) {
-        to_ref = delta * 3 / 100;
-        asset out_ref;
-        _market.modify(_market.begin(), _self, [&](auto &m) {
-            out_ref = m.buy(to_ref);
-        });         
         auto ref = name(params[2]);
-        if (is_account(ref) && ref != from) {   
-            if (out_ref.amount > 0) {
-            action(
-                permission_level{_self, "active"_n},
-                TOKEN_CONTRACT, "transfer"_n,
-                make_tuple(_self, ref, out_ref,
-                            std::string("mining token by reference")))
-                .send();
+        if (is_account(ref) && ref != from) {
+            to_ref = out * 3 / 40;
+            auto itr_ref = _player.find(ref.value);
+            if (itr_ref == _player.end()) {
+                _player.emplace(from, [&](auto &p) {
+                    p.account = ref.value;
+                    p.ref_profit = to_ref.amount;
+                });
+            } else {
+                _player.modify(itr_ref, from, [&](auto &p) {
+                    p.ref_profit += to_ref.amount;
+                });
             }
         } 
     }
 
-    auto to_prize_pool = delta - to_owner - to_dividend_pool - to_ref;
-    asset out_pool;
-    _market.modify(_market.begin(), _self, [&](auto &m) {
-        out_pool = m.buy(to_prize_pool);
-    });
-    g.pool += out_pool.amount;
-    g.last = from;
+    auto to_dividend_pool = out - to_prize_pool - to_ref;
+    council::make_profit(to_dividend_pool.amount);
 
+    g.last = from;
     g.ed += itr->next_price() * 60 / 10000;
     _global.set(g, _self);       
-
-    // mining...
-    /*
-    asset out;
-    _market.modify(_market.begin(), _self, [&](auto &m) {
-        out = m.buy(delta);
-    }); 
-
-    out.amount /= 5;
-    if (params.size() >= 3) {
-       auto ref = name(params[2].c_str());
-       if (is_account(ref) && ref != name(from)) {   
-            if (out.amount > 0) {
-                
-            action( // winner winner chicken dinner
-                permission_level{_self, "active"_n},
-                 "dacincubator"_n, "transfer"_n,
-                make_tuple(_self, ref, out,
-                            std::string("mining token by reference")))
-                .send(); 
-            }            
-        }    
-    }    
-
-    out.amount *= 2;
-    if (out.amount > 0){        
-        action(
-            permission_level{_self, "active"_n},
-            "dacincubator"_n, "transfer"_n,
-            make_tuple(_self, itr->owner, out, std::string("mining token by play game"))
-        ).send();       
-    }    */
-
 
     _land.modify(itr, get_self(), [&](auto &t) {
         t.owner = from;
         t.price = itr->next_price();
     });
-
-    // countdownrest() ;    
 }
 
 void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>& params) {
@@ -251,56 +220,65 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
 
     auto delta = itr->next_price() - itr->price;
 
-    auto to_dividend_pool = delta * 5 / 100;
-    council::make_profit(to_dividend_pool);
+    auto to_creator = delta * itr->creator_fee / 1000;
+    auto itr_creator = _player.find((itr->creator).value);
+    if (itr_creator == _player.end()) {
+        _player.emplace(from, [&](auto &p) {
+            p.account = itr->creator.value;
+            p.fee_profit =  to_creator;
+        });
+    } else {
+        _player.modify(itr_creator, from, [&](auto &p) {
+            p.fee_profit += to_creator;
+        });
+    }
 
-    uint64_t to_ref = 0; 
+    eosio_assert(delta * 95 / 100 > to_creator + delta * itr->ref_fee / 1000, "error portal owner income.");
+    auto to_owner = delta * 95 / 100 - to_creator - delta * itr->ref_fee / 1000;
+    auto itr_owner = _player.find((itr->owner).value);
+    if (itr_owner == _player.end()) {
+        _player.emplace(from, [&](auto &p) {
+            p.account = itr->owner.value;
+            p.land_profit = itr->price + to_owner;
+        });
+    } else {
+        _player.modify(itr_owner, from, [&](auto &p) {
+            p.land_profit += itr->price + to_owner;
+        });
+    }
+    
+    delta = delta * 5 / 100 + delta * itr->ref_fee / 1000;
+    asset out;
+    _market.modify(_market.begin(), _self, [&](auto &m) {
+        out = m.buy(delta);
+    });
+
+    asset to_ref;
     if (params.size() >= 3) {
-        to_ref = delta * itr->ref_fee / 1000;
-        asset out_ref;
-        _market.modify(_market.begin(), _self, [&](auto &m) {
-            out_ref = m.buy(to_ref);
-        });         
         auto ref = name(params[2]);
-        if (is_account(ref) && ref != from) {   
-            if (out_ref.amount > 0) {
-            action(
-                permission_level{_self, "active"_n},
-                TOKEN_CONTRACT, "transfer"_n,
-                make_tuple(_self, ref, out_ref,
-                            std::string("mining token by reference")))
-                .send();
+        if (is_account(ref) && ref != from) { 
+            to_ref = out * itr->ref_fee / (itr->ref_fee + 50) ;  
+            auto itr_ref = _player.find(ref.value);
+            if (itr_ref == _player.end()) {
+                _player.emplace(from, [&](auto &p) {
+                    p.account = ref.value;
+                    p.ref_profit = to_ref.amount;
+                });
+            } else {
+                _player.modify(itr_ref, from, [&](auto &p) {
+                    p.ref_profit += to_ref.amount;
+                });
             }
         } 
-    }
-
-    auto to_creator = delta * itr->creator_fee / 1000;
-    if (to_creator > 0) {
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, itr->creator, asset(to_creator, EOS_SYMBOL),
-                std::string("transfer ownership fee for creator"))
-        ).send();         
-    }
-
-    auto to_owner = delta - to_dividend_pool - to_ref - to_creator;
-    if (delta > 0) {
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, itr->owner, asset(itr->price + to_owner, EOS_SYMBOL),
-                std::string("transfer ownership"))
-        ).send();       
     } 
 
+    auto to_dividend_pool = out - to_ref;
+    council::make_profit(to_dividend_pool.amount);
 
     _portal.modify(itr, get_self(), [&](auto &p) {
         p.owner = from;
         p.price = itr->next_price();
     });
-
-    // countdownrest() ;    
 }
 
 void cryptomeetup::buy(name from, extended_asset in, const vector<string>& params) {

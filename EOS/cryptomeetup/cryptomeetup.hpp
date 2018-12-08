@@ -48,13 +48,14 @@ public:
     };    
     
     TABLE player {
-        name  account;
+        uint64_t  account;
         uint64_t portal_approved;
         uint64_t meetup_attended;
-        uint64_t land_profit;
-        uint64_t ref_profit;
-        uint64_t fee_profit;
-        uint64_t pool_profit;
+        uint64_t land_profit;   // 卖land/portal收入 EOS
+        uint64_t ref_profit;    // 拉人收入(land/portal两种情况) CMU
+        uint64_t fee_profit;    // creator创建地标收入(仅portal) EOS
+        uint64_t pool_profit;   // 奖池收入 CMU(仅land)。奖池收入全网一直为0，只有某轮结束后最后那个玩家的奖池收入才变化
+                                // 还有个抵押分红，记录在global和voters里面。这里不涉及。
         auto primary_key() const {return account;}        
         void withdraw() {
         }
