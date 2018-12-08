@@ -141,12 +141,12 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     auto to_owner = delta * 60 / 100;
     auto itr_owner = _player.find((itr->owner).value);
     if (itr_owner == _player.end()) {
-        _player.emplace(from, [&](auto &p) {
+        _player.emplace(_self, [&](auto &p) {
             p.account = itr->owner.value;
             p.land_profit = itr->price + to_owner;
         });
     } else {
-        _player.modify(itr_owner, from, [&](auto &p) {
+        _player.modify(itr_owner, _self, [&](auto &p) {
             p.land_profit += itr->price + to_owner;
         });
     }
@@ -167,12 +167,12 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
             to_ref = out * 3 / 40;
             auto itr_ref = _player.find(ref.value);
             if (itr_ref == _player.end()) {
-                _player.emplace(from, [&](auto &p) {
+                _player.emplace(_self, [&](auto &p) {
                     p.account = ref.value;
                     p.ref_profit = to_ref.amount;
                 });
             } else {
-                _player.modify(itr_ref, from, [&](auto &p) {
+                _player.modify(itr_ref, _self, [&](auto &p) {
                     p.ref_profit += to_ref.amount;
                 });
             }
@@ -223,12 +223,12 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     auto to_creator = delta * itr->creator_fee / 1000;
     auto itr_creator = _player.find((itr->creator).value);
     if (itr_creator == _player.end()) {
-        _player.emplace(from, [&](auto &p) {
+        _player.emplace(_self, [&](auto &p) {
             p.account = itr->creator.value;
             p.fee_profit =  to_creator;
         });
     } else {
-        _player.modify(itr_creator, from, [&](auto &p) {
+        _player.modify(itr_creator, _self, [&](auto &p) {
             p.fee_profit += to_creator;
         });
     }
@@ -237,12 +237,12 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     auto to_owner = delta * 95 / 100 - to_creator - delta * itr->ref_fee / 1000;
     auto itr_owner = _player.find((itr->owner).value);
     if (itr_owner == _player.end()) {
-        _player.emplace(from, [&](auto &p) {
+        _player.emplace(_self, [&](auto &p) {
             p.account = itr->owner.value;
             p.land_profit = itr->price + to_owner;
         });
     } else {
-        _player.modify(itr_owner, from, [&](auto &p) {
+        _player.modify(itr_owner, _self, [&](auto &p) {
             p.land_profit += itr->price + to_owner;
         });
     }
@@ -260,12 +260,12 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
             to_ref = out * itr->ref_fee / (itr->ref_fee + 50) ;  
             auto itr_ref = _player.find(ref.value);
             if (itr_ref == _player.end()) {
-                _player.emplace(from, [&](auto &p) {
+                _player.emplace(_self, [&](auto &p) {
                     p.account = ref.value;
                     p.ref_profit = to_ref.amount;
                 });
             } else {
-                _player.modify(itr_ref, from, [&](auto &p) {
+                _player.modify(itr_ref, _self, [&](auto &p) {
                     p.ref_profit += to_ref.amount;
                 });
             }
