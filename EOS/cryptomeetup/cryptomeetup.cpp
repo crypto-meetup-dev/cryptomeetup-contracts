@@ -342,6 +342,8 @@ void cryptomeetup::sell(name from, extended_asset in, const vector<string>& para
 
 void cryptomeetup::onTransfer(name from, name to, extended_asset in, string memo){
 
+        eosio_assert(false, "not start yet.");
+
     if (to != _self) return;
     require_auth(from);
     eosio_assert(in.quantity.is_valid(), "invalid token transfer");
