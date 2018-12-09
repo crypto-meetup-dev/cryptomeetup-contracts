@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Dec  7 13:39:15 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Sat Dec  8 09:09:36 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -203,7 +203,7 @@
             "fields": [
                 {
                     "name": "account",
-                    "type": "name"
+                    "type": "uint64"
                 },
                 {
                     "name": "portal_approved",
