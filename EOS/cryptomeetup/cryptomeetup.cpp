@@ -8,10 +8,19 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
-    auto g = _global.get_or_create( _self, global{});    
-    g.ed = now() + 30*24*60*60;
+    auto g = _global.get_or_create( _self, global{});
+    g.st = now();
+    _global.set(g, _self);
+    /*
+    auto g = _global.get_or_create( _self, global{});
+    g.st = 1544356800;
+    g.ed = 1544356800 + 30*24*60*60;
     _global.set(g, _self);
 
+    while (_player.begin() != _player.end()) {
+        _player.erase(_player.begin());
+    }    
+    */
     /*
     auto st = _land.available_primary_key();
     for (int i=st;i<st+20;++i) {
@@ -142,7 +151,7 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     auto itr_owner = _player.find((itr->owner).value);
     if (itr_owner == _player.end()) {
         _player.emplace(_self, [&](auto &p) {
-            p.account = itr->owner.value;
+            p.account = itr->owner;
             p.land_profit = itr->price + to_owner;
         });
     } else {
@@ -168,7 +177,7 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
             auto itr_ref = _player.find(ref.value);
             if (itr_ref == _player.end()) {
                 _player.emplace(_self, [&](auto &p) {
-                    p.account = ref.value;
+                    p.account = ref;
                     p.ref_profit = to_ref.amount;
                 });
             } else {
@@ -224,7 +233,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     auto itr_creator = _player.find((itr->creator).value);
     if (itr_creator == _player.end()) {
         _player.emplace(_self, [&](auto &p) {
-            p.account = itr->creator.value;
+            p.account = itr->creator;
             p.fee_profit =  to_creator;
         });
     } else {
@@ -238,7 +247,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     auto itr_owner = _player.find((itr->owner).value);
     if (itr_owner == _player.end()) {
         _player.emplace(_self, [&](auto &p) {
-            p.account = itr->owner.value;
+            p.account = itr->owner;
             p.land_profit = itr->price + to_owner;
         });
     } else {
@@ -261,7 +270,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
             auto itr_ref = _player.find(ref.value);
             if (itr_ref == _player.end()) {
                 _player.emplace(_self, [&](auto &p) {
-                    p.account = ref.value;
+                    p.account = ref;
                     p.ref_profit = to_ref.amount;
                 });
             } else {
