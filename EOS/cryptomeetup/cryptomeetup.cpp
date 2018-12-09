@@ -169,7 +169,7 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     asset to_prize_pool = out * 10 / 40;
     g.pool += to_prize_pool.amount;
 
-    asset to_ref;
+    asset to_ref = asset(0, CMU_SYMBOL);
     if (params.size() >= 3) {
         auto ref = name(params[2]);
         if (is_account(ref) && ref != from) {
@@ -199,6 +199,8 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
         t.owner = from;
         t.price = itr->next_price();
     });
+
+    council::claim(from);
 }
 
 void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>& params) {
@@ -262,7 +264,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
         out = m.buy(delta);
     });
 
-    asset to_ref;
+    asset to_ref = asset(0, CMU_SYMBOL);
     if (params.size() >= 3) {
         auto ref = name(params[2]);
         if (is_account(ref) && ref != from) { 
@@ -288,6 +290,8 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
         p.owner = from;
         p.price = itr->next_price();
     });
+
+    council::claim(from);
 }
 
 void cryptomeetup::buy(name from, extended_asset in, const vector<string>& params) {
