@@ -89,6 +89,37 @@ public:
     }
     ACTION claim(name from) {
         council::claim(from);
+
+
+        auto itr_owner = _player.find((itr->owner).value);
+
+        if (itr_owner == _player.end()) {
+        } else {
+            action(
+                permission_level{_self, "active"_n},
+                "eosio.token"_n, "transfer"_n,
+                make_tuple(_self, from, asset(itr_owner->land_profit + itr_owner->fee_profit, EOS_SYMBOL),
+                    std::string("exceed eos transfer."))
+            ).send();    
+
+            _player.modify(itr_ref, _self, [&](auto &p) {
+                p.land_profit = 0;
+                p.fee_profit = 0;
+            });
+
+
+            /*
+            uint64_t cmu_profit = 0;
+            cmu_profit += p.ref_profit + p.
+
+            action(
+                permission_level{_self, "active"_n},
+                "eosio.token"_n, "transfer"_n,
+                make_tuple(_self, from, asset(p.land_profit, CMU_SYMBOL),
+                    std::string("exceed eos transfer."))
+            ).send();  */
+        }
+
     }  
     ACTION refund(name from) {
         council::refund(from);
