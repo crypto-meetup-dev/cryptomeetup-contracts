@@ -48,7 +48,7 @@ public:
     };    
     
     TABLE player {
-        uint64_t  account;
+        uint64_t account;
         uint64_t portal_approved;
         uint64_t meetup_attended;
         uint64_t land_profit;   // 卖land/portal收入 EOS
