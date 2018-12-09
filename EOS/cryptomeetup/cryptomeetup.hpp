@@ -145,6 +145,9 @@ public:
     void sell(name from, extended_asset in, const vector<string>& params);     
 
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
+
+        eosio_assert(false, "not start yet.");
+
         auto &thiscontract = *this;
         if (action == name("transfer").value) {
             auto transfer_data = unpack_action_data<st_transfer>();
