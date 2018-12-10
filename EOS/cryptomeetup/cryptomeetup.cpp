@@ -68,11 +68,19 @@ void cryptomeetup::test() {
 
 void cryptomeetup::checkin(name from, const checksum256 &hash) {
     require_auth(_self);    
+
+
+    
+
 }
 
 void cryptomeetup::airdrop(name from, asset eos) {
     require_auth(_self);    
+
+    auto itr = _player.find(from.value);
+    _player.erase( itr );        
 }
+
 
 void cryptomeetup::newportal(name from, uint64_t id, uint64_t parent_id, 
     uint64_t creator_fee, uint64_t ref_fee, 
@@ -333,6 +341,8 @@ void cryptomeetup::sell(name from, extended_asset in, const vector<string>& para
 }
 
 void cryptomeetup::onTransfer(name from, name to, extended_asset in, string memo){
+
+        eosio_assert(false, "not start yet.");
 
     if (to != _self) return;
     require_auth(from);

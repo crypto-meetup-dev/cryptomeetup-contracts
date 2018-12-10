@@ -14,8 +14,7 @@ public:
     council( receiver, code, ds ),
     _market(receiver, receiver.value),
     _land(receiver, receiver.value),
-    _portal(receiver, receiver.value),    
-    _player(receiver, receiver.value) {}
+    _portal(receiver, receiver.value) {}
 
     TABLE global : public global_info {};
     TABLE voters : public voter_info {};
@@ -48,15 +47,11 @@ public:
     };    
     
     TABLE player {
-        name account;
         uint64_t portal_approved;
         uint64_t meetup_attended;
-        uint64_t land_profit;   // 卖land/portal收入 EOS
+        uint64_t game_profit;   // 游戏收入 EOS
         uint64_t ref_profit;    // 拉人收入(land/portal两种情况) CMU
-        uint64_t fee_profit;    // creator创建地标收入(仅portal) EOS
-        uint64_t pool_profit;   // 奖池收入 CMU(仅land)。奖池收入全网一直为0，只有某轮结束后最后那个玩家的奖池收入才变化
-                                // 还有个抵押分红，记录在global和voters里面。这里不涉及。
-        uint64_t primary_key() const {return account.value;}        
+        uint64_t fee_profit;    // creator创建地标收入(仅portal) CMU
         void withdraw() {
         }
     };
@@ -67,13 +62,12 @@ public:
     };
 
     typedef eosio::multi_index<"land"_n, land> land_t;
-    land_t _land;   
+    land_t _land;
     typedef eosio::multi_index<"portal"_n, portal> portal_t;
     portal_t _portal;    
 
-    typedef eosio::multi_index<"players"_n, player> player_t;
-    player_t _player;  
-  
+    typedef singleton<"players"_n, player> singleton_global;
+
     typedef eosio::multi_index<"market"_n, market> market_t;
     market_t _market;    
 
@@ -88,6 +82,9 @@ public:
         council::unstake(from, delta);
     }
     ACTION claim(name from) {
+
+                eosio_assert(false, "not start yet.");
+
         council::claim(from);
 
 
@@ -145,6 +142,7 @@ public:
     void sell(name from, extended_asset in, const vector<string>& params);     
 
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
+
         auto &thiscontract = *this;
         if (action == name("transfer").value) {
             auto transfer_data = unpack_action_data<st_transfer>();
