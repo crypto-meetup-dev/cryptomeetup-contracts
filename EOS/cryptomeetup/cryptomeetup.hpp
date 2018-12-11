@@ -49,7 +49,7 @@ public:
     TABLE player {
         uint64_t portal_approved;
         uint64_t meetup_attended;
-        uint64_t game_profit;   // 游戏收入 EOS
+        uint64_t game_profit;   // 游戏收入(land/portal两种情况) EOS
         uint64_t ref_profit;    // 拉人收入(land/portal两种情况) CMU
         uint64_t fee_profit;    // creator创建地标收入(仅portal) CMU
         void withdraw() {
@@ -66,7 +66,7 @@ public:
     typedef eosio::multi_index<"portal"_n, portal> portal_t;
     portal_t _portal;    
 
-    typedef singleton<"players"_n, player> singleton_global;
+    typedef singleton<"players"_n, player> singleton_players;
 
     typedef eosio::multi_index<"market"_n, market> market_t;
     market_t _market;    
@@ -87,24 +87,17 @@ public:
 
         council::claim(from);
 
+        singleton_players _player(_self, from.value);
+        auto p = _player.get();    
 
-        auto itr_owner = _player.find(from.value);
-
-        if (itr_owner == _player.end()) {
-            eosio_assert(false, "nothing claim.");
-        } else {
-            action(
-                permission_level{_self, "active"_n},
-                "eosio.token"_n, "transfer"_n,
-                make_tuple(_self, from, asset(itr_owner->land_profit + itr_owner->fee_profit, EOS_SYMBOL),
-                    std::string("exceed eos transfer."))
-            ).send();    
-
-            _player.modify(itr_owner, _self, [&](auto &p) {
-                p.land_profit = 0;
-                p.fee_profit = 0;
-            });
-
+        action(
+            permission_level{_self, "active"_n},
+            "eosio.token"_n, "transfer"_n,
+            make_tuple(_self, from, asset(p.game_profit, EOS_SYMBOL),
+                std::string("land_profit & creator_profit"))
+        ).send();    
+        p.game_profit = 0;
+        _player.set(p,_self);
 
             /*
             uint64_t cmu_profit = 0;
@@ -116,8 +109,6 @@ public:
                 make_tuple(_self, from, asset(p.land_profit, CMU_SYMBOL),
                     std::string("exceed eos transfer."))
             ).send();  */
-        }
-
     }  
     ACTION refund(name from) {
         council::refund(from);

@@ -76,9 +76,10 @@ void cryptomeetup::checkin(name from, const checksum256 &hash) {
 
 void cryptomeetup::airdrop(name from, asset eos) {
     require_auth(_self);    
-
+    /*
     auto itr = _player.find(from.value);
-    _player.erase( itr );        
+    _player.erase( itr );   
+    */     
 }
 
 
@@ -156,17 +157,10 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     auto delta = itr->next_price() - itr->price;
 
     auto to_owner = delta * 60 / 100;
-    auto itr_owner = _player.find((itr->owner).value);
-    if (itr_owner == _player.end()) {
-        _player.emplace(_self, [&](auto &p) {
-            p.account = itr->owner;
-            p.land_profit = itr->price + to_owner;
-        });
-    } else {
-        _player.modify(itr_owner, _self, [&](auto &p) {
-            p.land_profit += itr->price + to_owner;
-        });
-    }
+    singleton_players _player1(_self, itr->owner.value);
+    auto p1 = _player1.get_or_create(_self, player{});
+    p1.game_profit += itr->price + to_owner;
+    _player1.set(p1, _self);
 
     delta -= to_owner;
     asset out;
@@ -182,17 +176,10 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
         auto ref = name(params[2]);
         if (is_account(ref) && ref != from) {
             to_ref = out * 3 / 40;
-            auto itr_ref = _player.find(ref.value);
-            if (itr_ref == _player.end()) {
-                _player.emplace(_self, [&](auto &p) {
-                    p.account = ref;
-                    p.ref_profit = to_ref.amount;
-                });
-            } else {
-                _player.modify(itr_ref, _self, [&](auto &p) {
-                    p.ref_profit += to_ref.amount;
-                });
-            }
+            singleton_players _player2(_self, ref.value);
+            auto p2 = _player2.get_or_create(_self, player{});
+            p2.ref_profit += to_ref.amount;
+            _player2.set(p2,_self);
         } 
     }
 
@@ -239,34 +226,15 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
 
     auto delta = itr->next_price() - itr->price;
 
-    auto to_creator = delta * itr->creator_fee / 1000;
-    auto itr_creator = _player.find((itr->creator).value);
-    if (itr_creator == _player.end()) {
-        _player.emplace(_self, [&](auto &p) {
-            p.account = itr->creator;
-            p.fee_profit =  to_creator;
-        });
-    } else {
-        _player.modify(itr_creator, _self, [&](auto &p) {
-            p.fee_profit += to_creator;
-        });
-    }
 
-    eosio_assert(delta * 95 / 100 > to_creator + delta * itr->ref_fee / 1000, "error portal owner income.");
-    auto to_owner = delta * 95 / 100 - to_creator - delta * itr->ref_fee / 1000;
-    auto itr_owner = _player.find((itr->owner).value);
-    if (itr_owner == _player.end()) {
-        _player.emplace(_self, [&](auto &p) {
-            p.account = itr->owner;
-            p.land_profit = itr->price + to_owner;
-        });
-    } else {
-        _player.modify(itr_owner, _self, [&](auto &p) {
-            p.land_profit += itr->price + to_owner;
-        });
-    }
+    eosio_assert(delta * 95 / 100 > delta * itr->creator_fee / 1000 + delta * itr->ref_fee / 1000, "error portal owner income.");
+    auto to_owner = delta * 95 / 100 - delta * itr->creator_fee / 1000 - delta * itr->ref_fee / 1000;
+    singleton_players _player1(_self, itr->owner.value);
+    auto p1 = _player1.get_or_create(_self, player{});
+    p1.game_profit += itr->price + to_owner;
+    _player1.set(p1,_self);
     
-    delta = delta * 5 / 100 + delta * itr->ref_fee / 1000;
+    delta -= to_owner;
     asset out;
     _market.modify(_market.begin(), _self, [&](auto &m) {
         out = m.buy(delta);
@@ -276,22 +244,22 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     if (params.size() >= 3) {
         auto ref = name(params[2]);
         if (is_account(ref) && ref != from) { 
-            to_ref = out * itr->ref_fee / (itr->ref_fee + 50) ;  
-            auto itr_ref = _player.find(ref.value);
-            if (itr_ref == _player.end()) {
-                _player.emplace(_self, [&](auto &p) {
-                    p.account = ref;
-                    p.ref_profit = to_ref.amount;
-                });
-            } else {
-                _player.modify(itr_ref, _self, [&](auto &p) {
-                    p.ref_profit += to_ref.amount;
-                });
-            }
+            to_ref = out * itr->ref_fee / (itr->ref_fee + 50 + itr->creator_fee) ; 
+            singleton_players _player2(_self, itr->owner.value);
+            auto p2 = _player2.get_or_create(_self, player{});
+            p2.ref_profit += to_ref.amount;
+            _player2.set(p2,_self);
         } 
-    } 
+    }
 
-    auto to_dividend_pool = out - to_ref;
+
+    auto to_creator = out * itr->creator_fee / (itr->ref_fee + 50 + itr->creator_fee);
+    singleton_players _player3(_self, itr->creator.value);
+    auto p3 = _player3.get_or_create(_self, player{});
+    p3.fee_profit +=  to_creator.amount;
+    _player3.set(p3,_self);
+
+    auto to_dividend_pool = out - to_ref - to_creator;
     council::make_profit(to_dividend_pool.amount);
 
     _portal.modify(itr, get_self(), [&](auto &p) {
