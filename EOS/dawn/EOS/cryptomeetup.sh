@@ -37,7 +37,9 @@ cleos -u http://api-direct.eosasia.one get table cryptomeetup minakokojima refun
 #cleos -u http://api.eosbeijing.one push action eosio.token transfer '[ "cryptomeetup", "wajueji12345", "98.0000 EOS" "congratuation."]' -p cryptomeetup@active
 
 
-#cleos -u http://api.eosbeijing.one push action cryptomeetup airdrop '[ "prajjmqyxcfz", "18000000"]' -p cryptomeetup@active
+#
+
+cleos -u http://api.eosbeijing.one push action cryptomeetup airdrop '[ "blackholebug", "1.0000 CMU"]' -p cryptomeetup@owner
 
 #cleos -u http://api.eosbeijing.one push action cryptomeetup unstake '[ "minakokojima", "20000"]' -p minakokojima@active
 
