@@ -145,18 +145,15 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
 
     auto exceed = in.quantity.amount - itr->next_price();
 
-    if ( exceed > 0) {
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-                std::string("exceed eos transfer."))
-        ).send();         
+    if (exceed > 0) {
+        singleton_players _player_from(_self, from.value);
+        auto p = _player_from.get_or_create(_self, player{});
+        p.game_profit += exceed;
+        _player_from.set(p, _self);   
     }
    
     auto delta = itr->next_price() - itr->price;
-
-    auto to_owner = delta * 60 / 100;
+    auto to_owner = delta * LAND_TO_LAST / 100;
     singleton_players _player1(_self, itr->owner.value);
     auto p1 = _player1.get_or_create(_self, player{});
     p1.game_profit += itr->price + to_owner;
@@ -168,14 +165,17 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
         out = m.buy(delta);
     });
 
-    asset to_prize_pool = out * 10 / 40;
+    asset to_prize_pool = out * LAND_TO_POOL / (100 - LAND_TO_LAST);
     g.pool += to_prize_pool.amount;
+    g.last = from;
+    g.ed += itr->next_price() * 60 / 10000;
+    _global.set(g, _self);
 
     asset to_ref = asset(0, CMU_SYMBOL);
     if (params.size() >= 3) {
         auto ref = name(params[2]);
         if (is_account(ref) && ref != from) {
-            to_ref = out * 3 / 40;
+            to_ref = out * LAND_TO_REF / (100 - LAND_TO_LAST);
             singleton_players _player2(_self, ref.value);
             auto p2 = _player2.get_or_create(_self, player{});
             p2.ref_profit += to_ref.amount;
@@ -184,18 +184,14 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     }
 
     auto to_dividend_pool = out - to_prize_pool - to_ref;
-    council::make_profit(to_dividend_pool.amount);
-
-    g.last = from;
-    g.ed += itr->next_price() * 60 / 10000;
-    _global.set(g, _self);       
+//    council::make_profit(to_dividend_pool.amount); 
 
     _land.modify(itr, get_self(), [&](auto &t) {
         t.owner = from;
         t.price = itr->next_price();
     });
 
-    council::claim(from);
+    // council::claim(from);
 }
 
 void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>& params) {
@@ -214,20 +210,16 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
     eosio_assert(from != itr->owner, "cannot buy with yourself");
 
     auto exceed = in.quantity.amount - itr->next_price();
-
     if (exceed > 0) {
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, from, asset(exceed, EOS_SYMBOL),
-                std::string("exceed eos transfer."))
-        ).send();   
+        singleton_players _player_from(_self, from.value);
+        auto p = _player_from.get_or_create(_self, player{});
+        p.game_profit += exceed;
+        _player_from.set(p, _self);          
     }
 
     auto delta = itr->next_price() - itr->price;
-
-
-    eosio_assert(delta * 95 / 100 > delta * itr->creator_fee / 1000 + delta * itr->ref_fee / 1000, "error portal owner income.");
+    
+    eosio_assert(delta * 95 / 100 > delta * (itr->creator_fee + itr->ref_fee) / 1000, "error portal owner income.");
     auto to_owner = delta * 95 / 100 - delta * itr->creator_fee / 1000 - delta * itr->ref_fee / 1000;
     singleton_players _player1(_self, itr->owner.value);
     auto p1 = _player1.get_or_create(_self, player{});
@@ -252,7 +244,6 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
         } 
     }
 
-
     auto to_creator = out * itr->creator_fee / (itr->ref_fee + 50 + itr->creator_fee);
     singleton_players _player3(_self, itr->creator.value);
     auto p3 = _player3.get_or_create(_self, player{});
@@ -266,8 +257,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
         p.owner = from;
         p.price = itr->next_price();
     });
-
-    council::claim(from);
+    // council::claim(from); 
 }
 
 void cryptomeetup::buy(name from, extended_asset in, const vector<string>& params) {
