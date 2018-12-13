@@ -60,6 +60,11 @@ void cryptomeetup::clear() {
     auto itr = _portal.begin();
     _portal.erase( itr );
     */
+   auto itr = _portal.find(9);
+   
+    _portal.modify(itr, get_self(), [&](auto &p) {
+        p.parent = 45;
+    });
 }
 
 void cryptomeetup::test() {
