@@ -60,6 +60,11 @@ void cryptomeetup::clear() {
     auto itr = _portal.begin();
     _portal.erase( itr );
     */
+   auto itr = _portal.find(9);
+   
+    _portal.modify(itr, get_self(), [&](auto &p) {
+        p.parent = 45;
+    });
 }
 
 void cryptomeetup::test() {
@@ -314,10 +319,9 @@ void cryptomeetup::sell(name from, extended_asset in, const vector<string>& para
 }
 
 void cryptomeetup::onTransfer(name from, name to, extended_asset in, string memo){
-
-     eosio_assert(false, "not start yet.");
-
     if (to != _self) return;
+
+    eosio_assert(false, "not start yet.");
     require_auth(from);
     eosio_assert(in.quantity.is_valid(), "invalid token transfer");
     eosio_assert(in.quantity.amount > 0, "must transfer a positive amount");
