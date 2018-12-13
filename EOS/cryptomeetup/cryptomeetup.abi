@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Dec 13 04:42:02 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Dec 13 05:18:01 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -198,7 +198,7 @@
             ]
         },
         {
-            "name": "player",
+            "name": "players",
             "base": "",
             "fields": [
                 {
@@ -500,8 +500,8 @@
             "key_types": []
         },
         {
-            "name": "player",
-            "type": "player",
+            "name": "players",
+            "type": "players",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

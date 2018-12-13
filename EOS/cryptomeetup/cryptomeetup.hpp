@@ -46,12 +46,12 @@ public:
         }
     };    
     
-    TABLE player {
+    TABLE players {
         uint64_t portal_approved;
         uint64_t meetup_attended;
         uint64_t game_profit;   // 游戏收入(land/portal两种情况) EOS
         uint64_t ref_profit;    // 拉人收入(land/portal两种情况) CMU
-        uint64_t fee_profit;    // creator创建地标收入(仅portal) CMU
+        uint64_t fee_profit;    // creator创建地标收入以及地标在哪个land的owner收入(仅portal) CMU
         void withdraw() {
         }
     };
@@ -66,7 +66,7 @@ public:
     typedef eosio::multi_index<"portal"_n, portal> portal_t;
     portal_t _portal;    
 
-    typedef singleton<"players"_n, player> singleton_players;
+    typedef singleton<"players"_n, players> singleton_players;
 
     typedef eosio::multi_index<"market"_n, market> market_t;
     market_t _market;    
@@ -83,7 +83,7 @@ public:
     }
     ACTION claim(name from) {
 
-                eosio_assert(false, "not start yet.");
+        eosio_assert(false, "not start yet.");
 
         council::claim(from);
 
