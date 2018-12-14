@@ -14,7 +14,7 @@ void council::stake(name from, asset delta) {
     require_auth(from);
     eosio_assert(delta.amount > 0, "must stake a positive amount");
     singleton_voters _voters(_self, from.value);
-    auto v = _voters.get_or_create(_self, voter_info{.staked = asset(0, TOKEN_SYMBOL)});
+    auto v = _voters.get_or_create(_self, voter_info{.staked = asset(0, CMU_SYMBOL)}); //CMU_SYMBOL
     auto g = _global.get();
     v.staked += delta;
     v.payout += g.earnings_per_share * delta.amount / MAGNITUDE;

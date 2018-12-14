@@ -67,12 +67,14 @@ void cryptomeetup::clear() {
         p.parent = 45;
     });
     */
+   /*
    for (uint64_t i = 0; i < 270; ++i) {
        auto itr = _land.find(i);
        _land.modify(itr, get_self(), [&](auto &l){
            l.price = 1000;
        });
    }
+   */
 }
 
 void cryptomeetup::test() {
@@ -97,6 +99,8 @@ void cryptomeetup::airdrop(name from, asset eos) {
     singleton_players _player_from(_self, from.value);
     _player_from.remove();
     */
+    singleton_voters _voters(_self, from.value);
+    _voters.remove();
 }
 
 
