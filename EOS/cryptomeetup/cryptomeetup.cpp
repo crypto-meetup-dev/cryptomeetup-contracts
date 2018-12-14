@@ -8,9 +8,13 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
+    /*
     auto g = _global.get_or_create( _self, global{});
-    g.st = now();
+    g.st = 1544788800; // 2018/12/14 20:00:00
+    g.ed = 1544788800 + 30*24*60*60;
+
     _global.set(g, _self);
+    */
     /*
     auto g = _global.get_or_create( _self, global{});
     g.st = 1544356800;
@@ -99,8 +103,10 @@ void cryptomeetup::airdrop(name from, asset eos) {
     singleton_players _player_from(_self, from.value);
     _player_from.remove();
     */
+   /*
     singleton_voters _voters(_self, from.value);
     _voters.remove();
+    */
 }
 
 
