@@ -86,9 +86,10 @@ public:
         council::claim(from);
 
         singleton_players _player(_self, from.value);
-        auto p = _player.get();    
+        auto p = _player.get_or_create(_self, players{});
+
         if (p.game_profit == 0 && p.ref_profit == 0 && p.fee_profit == 0) {
-            eosio_assert(false, "nothing to claim");
+            return;
         }
         if (p.game_profit > 0) {
             action(
