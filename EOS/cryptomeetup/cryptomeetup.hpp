@@ -49,7 +49,7 @@ public:
     TABLE players {
         uint64_t portal_approved;
         uint64_t meetup_attended;
-        uint64_t game_profit;   // 游戏收入(land/portal两种情况) EOS
+        uint64_t game_profit;   // 游戏收入(卖land/portal两种情况)以及exceed的 EOS
         uint64_t ref_profit;    // 拉人收入(land/portal两种情况) CMU
         uint64_t fee_profit;    // creator创建地标收入以及地标在哪个land的owner收入(仅portal) CMU
         void withdraw() {
@@ -82,33 +82,43 @@ public:
         council::unstake(from, delta);
     }
     ACTION claim(name from) {
-
-        eosio_assert(false, "not start yet.");
-
+        // eosio_assert(false, "not start yet.");
         council::claim(from);
 
         singleton_players _player(_self, from.value);
         auto p = _player.get();    
-
-        action(
-            permission_level{_self, "active"_n},
-            "eosio.token"_n, "transfer"_n,
-            make_tuple(_self, from, asset(p.game_profit, EOS_SYMBOL),
-                std::string("land_profit & creator_profit"))
-        ).send();    
-        p.game_profit = 0;
-        _player.set(p,_self);
-
-            /*
-            uint64_t cmu_profit = 0;
-            cmu_profit += p.ref_profit + p.
-
+        if (p.game_profit == 0 && p.ref_profit == 0 && p.fee_profit == 0) {
+            eosio_assert(false, "nothing to claim");
+        }
+        if (p.game_profit > 0) {
             action(
                 permission_level{_self, "active"_n},
-                "eosio.token"_n, "transfer"_n,
-                make_tuple(_self, from, asset(p.land_profit, CMU_SYMBOL),
-                    std::string("exceed eos transfer."))
-            ).send();  */
+                EOS_CONTRACT, "transfer"_n,
+                make_tuple(_self, from, asset(p.game_profit, EOS_SYMBOL),
+                    std::string("land_profit & creator_profit & exceed EOS"))
+            ).send();    
+            p.game_profit = 0;
+        }
+        if (p.ref_profit > 0) {
+            action(
+                permission_level{_self, "active"_n},
+                TOKEN_CONTRACT, "transfer"_n,
+                make_tuple(_self, from, asset(p.ref_profit, CMU_SYMBOL),
+                    std::string("refer profit CMU."))
+            ).send();
+            p.ref_profit = 0;
+        }
+        if (p.fee_profit > 0) {
+            action(
+                permission_level{_self, "active"_n},
+                TOKEN_CONTRACT, "transfer"_n,
+                make_tuple(_self, from, asset(p.fee_profit, CMU_SYMBOL),
+                    std::string("creator & parent profit CMU."))
+            ).send();
+            p.fee_profit = 0;
+        }
+
+        _player.set(p,_self);
     }  
     ACTION refund(name from) {
         council::refund(from);

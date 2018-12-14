@@ -60,11 +60,21 @@ void cryptomeetup::clear() {
     auto itr = _portal.begin();
     _portal.erase( itr );
     */
+   /*
    auto itr = _portal.find(9);
    
     _portal.modify(itr, get_self(), [&](auto &p) {
         p.parent = 45;
     });
+    */
+   /*
+   for (uint64_t i = 0; i < 270; ++i) {
+       auto itr = _land.find(i);
+       _land.modify(itr, get_self(), [&](auto &l){
+           l.price = 1000;
+       });
+   }
+   */
 }
 
 void cryptomeetup::test() {
@@ -89,6 +99,8 @@ void cryptomeetup::airdrop(name from, asset eos) {
     singleton_players _player_from(_self, from.value);
     _player_from.remove();
     */
+    singleton_voters _voters(_self, from.value);
+    _voters.remove();
 }
 
 
@@ -97,9 +109,9 @@ void cryptomeetup::newportal(name from, uint64_t id, uint64_t parent_id,
     uint64_t k, uint64_t price, uint64_t st) {
 
     require_auth(_self);
-    eosio_assert(creator_fee < 950, "illegal creator_fee");
-    eosio_assert(ref_fee < 950, "illegal ref_fee");
-    eosio_assert(creator_fee + ref_fee < 950, "illegal sum of fee");
+    eosio_assert(creator_fee < 930, "illegal creator_fee");
+    eosio_assert(ref_fee < 930, "illegal ref_fee");
+    eosio_assert(creator_fee + ref_fee < 930, "illegal sum of fee");
     eosio_assert(k >= 10 && k <= 1000, "illegal k");
     eosio_assert(price >= 1000 && price <= 10000000, "illegal initial price");
     if (st < now()) {
@@ -193,7 +205,7 @@ void cryptomeetup::buy_land(name from, extended_asset in, const vector<string>& 
     }
 
     auto to_dividend_pool = out - to_prize_pool - to_ref;
-//    council::make_profit(to_dividend_pool.amount); 
+    council::make_profit(to_dividend_pool.amount); 
 
     _land.modify(itr, get_self(), [&](auto &t) {
         t.owner = from;
@@ -268,7 +280,7 @@ void cryptomeetup::buy_portal(name from, extended_asset in, const vector<string>
 
 
     auto to_dividend_pool = out - to_ref - to_creator - to_parent;
-    //council::make_profit(to_dividend_pool.amount);
+    council::make_profit(to_dividend_pool.amount);
 
     _portal.modify(itr, get_self(), [&](auto &p) {
         p.owner = from;
@@ -321,7 +333,7 @@ void cryptomeetup::sell(name from, extended_asset in, const vector<string>& para
 void cryptomeetup::onTransfer(name from, name to, extended_asset in, string memo){
     if (to != _self) return;
 
-    eosio_assert(false, "not start yet.");
+    // eosio_assert(false, "not start yet.");
     require_auth(from);
     eosio_assert(in.quantity.is_valid(), "invalid token transfer");
     eosio_assert(in.quantity.amount > 0, "must transfer a positive amount");
