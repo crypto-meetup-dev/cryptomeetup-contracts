@@ -26,7 +26,7 @@ void council::stake(name from, asset delta) {
 void council::unstake(name from, asset delta) {
     require_auth(from);
     singleton_voters _voters(_self, from.value);
-    auto v = _voters.get_or_create(_self, voter_info{});
+    auto v = _voters.get_or_create(_self, voter_info{.staked = asset(0, TOKEN_SYMBOL)});
     auto g = _global.get();
     eosio_assert(delta <= v.staked, "don't have enough token for unstake");
 
@@ -55,7 +55,8 @@ void council::unstake(name from, asset delta) {
     req.amount += delta;
     _refunds.set(req, _self);
 
-    send_defer_refund_action(from);
+    //send_defer_refund_action(from);
+    council::refund(from);
 }
 
 void council::claim(name from) {
