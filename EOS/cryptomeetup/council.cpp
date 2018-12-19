@@ -83,19 +83,12 @@ void council::claim(name from) {
     }
 }
 
-void council::refund(name from, bool root = false) {
-    
-    if (root) {
-        require_auth(_self);
-    } else {
-        require_auth(from);
-    }
-    
-    singleton_refunds refunds_tbl( _self, from.value );
+void council::refund(name from) {
+    singleton_refunds refunds_tbl(_self, from.value);
     eosio_assert( refunds_tbl.exists(), "refund request not found" );
+    
     auto req = refunds_tbl.get();
-
-    // eosio_assert( req.request_time + refund_delay >= now(), "refund is not available yet" );
+    eosio_assert( req.request_time + refund_delay >= now(), "refund is not available yet" );
     // Until now() becomes NOW, the fact that now() is the timestamp of the previous block could in theory
     // allow people to get their tokens earlier than the 1 day delay if the unstake happened immediately after many
     // consecutive missed blocks.
