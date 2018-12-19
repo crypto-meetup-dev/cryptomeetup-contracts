@@ -29,6 +29,9 @@
         "system_error": "cpp",
         "__string": "cpp",
         "algorithm": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp",
+        "cstddef": "cpp"
     }
 }

@@ -55,8 +55,8 @@ void council::unstake(name from, asset delta) {
     req.amount += delta;
     _refunds.set(req, _self);
 
-    //send_defer_refund_action(from);
-    council::refund(from);
+    send_defer_refund_action(from);
+    // council::refund(from);
 }
 
 void council::claim(name from) {
@@ -83,8 +83,13 @@ void council::claim(name from) {
     }
 }
 
-void council::refund(name from) {
-    require_auth( from );
+void council::refund(name from, bool root = false) {
+    
+    if (root) {
+        require_auth(_self);
+    } else {
+        require_auth(from);
+    }
     
     singleton_refunds refunds_tbl( _self, from.value );
     eosio_assert( refunds_tbl.exists(), "refund request not found" );
