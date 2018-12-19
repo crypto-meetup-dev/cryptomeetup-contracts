@@ -55,7 +55,7 @@ void council::unstake(name from, asset delta) {
     req.amount += delta;
     _refunds.set(req, _self);
 
-    //send_defer_refund_action(from);
+    send_defer_refund_action(get_self());
     council::refund(from);
 }
 
