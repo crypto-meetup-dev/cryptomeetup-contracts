@@ -1,0 +1,14 @@
+{
+  "ignore": [
+    "README.md",
+    ".gitignore"
+  ],
+  "commands": {
+    "Compile": "tronbox compile",
+    "Migrate": "tronbox migrate",
+    "Test contracts": "tronbox test"
+  },
+  "hooks": {
+    "post-unpack": "bash post-unpack.sh && rm post-unpack.sh && npm install"
+  }
+}
