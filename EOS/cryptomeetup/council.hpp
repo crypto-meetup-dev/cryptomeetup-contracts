@@ -76,11 +76,15 @@ public:
     }
 
     void send_defer_refund_action(name from) {
-        transaction out;
-        out.actions.emplace_back(permission_level{ from, "active"_n }, _self, "refund"_n, from);
-        out.delay_sec = refund_delay;         
+        transaction out;        
+        out.actions.emplace_back(
+            permission_level{_self, "active"_n},
+            _self, "refund"_n, 
+            from
+        );
+        out.delay_sec = refund_delay;
         cancel_deferred(from.value); // TODO: Remove this line when replacing deferred trxs is fixed
-        out.send(from.value, from, true);
+        out.send(from.value, _self, true);
     }
 
     template <typename... Args>
@@ -209,7 +213,7 @@ public:
 
     ACTION init();
     ACTION unstake(name from, asset delta);
-    ACTION claim(name from);    
+    ACTION claim(name from);         
     ACTION refund(name from);    
     ACTION vote(name from, name to);
     ACTION unvote(name from);
