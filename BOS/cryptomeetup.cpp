@@ -11,7 +11,7 @@ void cryptomeetup::init() {
     
     auto g = _global.get_or_create( _self, global{});
     g.st = 1547800000; // 2019/1/18 16:26:40
-    g.ed = 1544788800 + 30*24*60*60;
+    g.ed = 1547800000 + 30*24*60*60;
 
     _global.set(g, _self);
     
@@ -25,7 +25,7 @@ void cryptomeetup::init() {
         _player.erase(_player.begin());
     }    
     */
-    
+    /*
     auto st = _land.available_primary_key();
     for (int i=st;i<st+220;++i) {
         auto from = "tengavinwood"_n;
@@ -56,6 +56,7 @@ void cryptomeetup::init() {
             m.progress = 0;
         });        
     }
+    */
 }
 
 void cryptomeetup::clear() {
