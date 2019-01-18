@@ -1,0 +1,534 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Jan 18 02:14:38 2019",
+    "version": "eosio::abi/1.1",
+    "structs": [
+        {
+            "name": "NFT",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "owner",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "_market",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "supply",
+                    "type": "asset"
+                },
+                {
+                    "name": "balance",
+                    "type": "asset"
+                },
+                {
+                    "name": "progress",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "airdrop",
+            "base": "",
+            "fields": [
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "bos",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "checkin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "hash",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
+            "name": "checkin_info",
+            "base": "",
+            "fields": [
+                {
+                    "name": "event_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "claim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "clear",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "global",
+            "base": "global_info",
+            "fields": []
+        },
+        {
+            "name": "global_info",
+            "base": "",
+            "fields": [
+                {
+                    "name": "defer_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "total_staked",
+                    "type": "asset"
+                },
+                {
+                    "name": "earnings_per_share",
+                    "type": "uint128"
+                },
+                {
+                    "name": "last",
+                    "type": "name"
+                },
+                {
+                    "name": "st",
+                    "type": "time"
+                },
+                {
+                    "name": "ed",
+                    "type": "time"
+                },
+                {
+                    "name": "pool",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "land",
+            "base": "tradeable_NFT",
+            "fields": []
+        },
+        {
+            "name": "market",
+            "base": "_market",
+            "fields": []
+        },
+        {
+            "name": "newland",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "bos",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "newportal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "parent_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "creator_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ref_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "k",
+                    "type": "uint64"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "st",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "players",
+            "base": "",
+            "fields": [
+                {
+                    "name": "portal_approved",
+                    "type": "uint64"
+                },
+                {
+                    "name": "meetup_attended",
+                    "type": "uint64"
+                },
+                {
+                    "name": "game_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ref_profit",
+                    "type": "uint64"
+                },
+                {
+                    "name": "fee_profit",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "portal",
+            "base": "land",
+            "fields": [
+                {
+                    "name": "parent",
+                    "type": "uint64"
+                },
+                {
+                    "name": "creator",
+                    "type": "name"
+                },
+                {
+                    "name": "creator_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ref_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "k",
+                    "type": "uint64"
+                },
+                {
+                    "name": "last_anti_bot_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "anti_bot_init_fee",
+                    "type": "uint64"
+                },
+                {
+                    "name": "anti_bot_timer",
+                    "type": "time"
+                },
+                {
+                    "name": "last_buy_timer",
+                    "type": "time"
+                },
+                {
+                    "name": "st",
+                    "type": "time"
+                }
+            ]
+        },
+        {
+            "name": "refund",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "refund_request",
+            "base": "",
+            "fields": [
+                {
+                    "name": "request_time",
+                    "type": "time"
+                },
+                {
+                    "name": "amount",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "refunds",
+            "base": "refund_request",
+            "fields": []
+        },
+        {
+            "name": "test",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "tradeable_NFT",
+            "base": "NFT",
+            "fields": [
+                {
+                    "name": "price",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "transfer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "unstake",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "delta",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "unvote",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "vote",
+            "base": "",
+            "fields": [
+                {
+                    "name": "from",
+                    "type": "name"
+                },
+                {
+                    "name": "to",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "voter_info",
+            "base": "",
+            "fields": [
+                {
+                    "name": "to",
+                    "type": "name"
+                },
+                {
+                    "name": "staked",
+                    "type": "asset"
+                },
+                {
+                    "name": "payout",
+                    "type": "int64"
+                }
+            ]
+        },
+        {
+            "name": "voters",
+            "base": "voter_info",
+            "fields": []
+        }
+    ],
+    "types": [
+        {
+            "new_type_name": "time",
+            "type": "uint32"
+        }
+    ],
+    "actions": [
+        {
+            "name": "airdrop",
+            "type": "airdrop",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "checkin",
+            "type": "checkin",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "claim",
+            "type": "claim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clear",
+            "type": "clear",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newland",
+            "type": "newland",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newportal",
+            "type": "newportal",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "refund",
+            "type": "refund",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "test",
+            "type": "test",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "transfer",
+            "type": "transfer",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "unstake",
+            "type": "unstake",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "unvote",
+            "type": "unvote",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "vote",
+            "type": "vote",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "checkins",
+            "type": "checkin_info",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "global",
+            "type": "global",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "land",
+            "type": "land",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "market",
+            "type": "market",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "players",
+            "type": "players",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "portal",
+            "type": "portal",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "refunds",
+            "type": "refunds",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "voters",
+            "type": "voters",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "abi_extensions": []
+}
