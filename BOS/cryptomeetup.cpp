@@ -8,13 +8,13 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
-    /*
+    
     auto g = _global.get_or_create( _self, global{});
-    g.st = 1544788800; // 2018/12/14 20:00:00
+    g.st = 1547800000; // 2019/1/18 16:26:40
     g.ed = 1544788800 + 30*24*60*60;
 
     _global.set(g, _self);
-    */
+    
     /*
     auto g = _global.get_or_create( _self, global{});
     g.st = 1544356800;
@@ -25,19 +25,19 @@ void cryptomeetup::init() {
         _player.erase(_player.begin());
     }    
     */
-    /*
+    
     auto st = _land.available_primary_key();
-    for (int i=st;i<st+20;++i) {
-        auto from = "eosotcbackup"_n;
-        _land.emplace(from, [&](auto &p) {
+    for (int i=st;i<st+220;++i) {
+        auto from = "tengavinwood"_n;
+        _land.emplace(_self, [&](auto &p) {
             p.id = _land.available_primary_key();
             p.owner = from;
             p.price = 10000;
         });
     }
-    */
+    
 
-    /*    
+     
     while (_market.begin() != _market.end()) {
         _market.erase(_market.begin());
     }
@@ -55,7 +55,7 @@ void cryptomeetup::init() {
             m.balance.symbol = BOS_SYMBOL;
             m.progress = 0;
         });        
-    }*/
+    }
 }
 
 void cryptomeetup::clear() {
