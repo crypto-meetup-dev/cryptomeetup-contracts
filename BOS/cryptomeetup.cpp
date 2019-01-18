@@ -8,13 +8,15 @@
 void cryptomeetup::init() {
     require_auth(_self);   
 
-    
+    /*
     auto g = _global.get_or_create( _self, global{});
-    g.st = 1547800000; // 2019/1/18 16:26:40
-    g.ed = 1547800000 + 30*24*60*60;
-
+    //g.st = 1547800000; // 2019/1/18 16:26:40
+    //g.ed = 1547800000 + 30*24*60*60;
+    g.total_staked = asset(0, CMU_SYMBOL);
     _global.set(g, _self);
     
+    */
+
     /*
     auto g = _global.get_or_create( _self, global{});
     g.st = 1544356800;
@@ -25,9 +27,9 @@ void cryptomeetup::init() {
         _player.erase(_player.begin());
     }    
     */
-    /*
+    
     auto st = _land.available_primary_key();
-    for (int i=st;i<st+220;++i) {
+    for (int i=st;i<st+50;++i) {
         auto from = "tengavinwood"_n;
         _land.emplace(_self, [&](auto &p) {
             p.id = _land.available_primary_key();
@@ -37,11 +39,11 @@ void cryptomeetup::init() {
     }
     
 
-     
+    /*
     while (_market.begin() != _market.end()) {
         _market.erase(_market.begin());
     }
-
+    
 
 
     if (_market.begin() == _market.end()) {
