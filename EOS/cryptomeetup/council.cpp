@@ -25,6 +25,8 @@ void council::stake(name from, asset delta) {
 
 void council::unstake(name from, asset delta) {
     require_auth(from);
+    eosio_assert(delta.is_valid(), "invalid quantity");
+    eosio_assert(delta.amount > 0, "must issue positive quantity");
     singleton_voters _voters(_self, from.value);
     auto v = _voters.get_or_create(_self, voter_info{.staked = asset(0, TOKEN_SYMBOL)});
     auto g = _global.get();
