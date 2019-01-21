@@ -62,7 +62,7 @@ void council::unstake(name from, asset delta) {
 void council::claim(name from) {
     require_auth(from);
     singleton_voters _voters(_self, from.value);
-    auto v = _voters.get_or_create(_self, voter_info{.staked = asset(0, CMU_SYMBOL)});
+    auto v = _voters.get_or_create(from, voter_info{.staked = asset(0, CMU_SYMBOL)});
     auto g = _global.get();
 
     // TODO(minakokojima): unvote(v);
@@ -71,7 +71,7 @@ void council::claim(name from) {
     if (raw_council > v.payout) delta.amount = raw_council - v.payout;
 
     v.payout = raw_council;
-    _voters.set(v, _self);
+    _voters.set(v, from);
 
     if (delta.amount > 0) {
         action(

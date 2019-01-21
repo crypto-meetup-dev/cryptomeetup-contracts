@@ -86,7 +86,7 @@ public:
         council::claim(from);
 
         singleton_players _player(_self, from.value);
-        auto p = _player.get_or_create(_self, players{});
+        auto p = _player.get_or_create(from, players{});
 
         if (p.game_profit == 0 && p.ref_profit == 0 && p.fee_profit == 0) {
             return;
@@ -119,7 +119,7 @@ public:
             p.fee_profit = 0;
         }
 
-        _player.set(p,_self);
+        _player.set(p,from);
     }  
     ACTION refund(name from) {
         council::refund(from);
