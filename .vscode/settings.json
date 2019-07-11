@@ -32,6 +32,9 @@
         "atomic": "cpp",
         "__config": "cpp",
         "__nullptr": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "xlocale": "cpp"
     }
 }

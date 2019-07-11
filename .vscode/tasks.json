@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "reveal": "always",
     "options": {
-        "cwd": "${workspaceFolder}/EOS/dawn/EOS/${fileBasenameNoExtension}/"
+        "cwd": "${workspaceFolder}/EOS/${fileBasenameNoExtension}/"
     },
     "tasks": [
         {

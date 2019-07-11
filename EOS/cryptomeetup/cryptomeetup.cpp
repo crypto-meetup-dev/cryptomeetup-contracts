@@ -60,10 +60,69 @@ void cryptomeetup::init() {
 
 void cryptomeetup::clear() {
     require_auth(_self);  
-    /* 
-    auto itr = _portal.begin();
-    _portal.erase( itr );
-    */
+    
+    singleton_global_t global(_self, _self.value);
+    global.remove();
+
+    auto itr = _land.begin();
+    while (itr != _land.end()) {
+        _land.erase(itr);
+        itr = _land.begin();
+    }
+    
+    auto itr2 = _market.begin();
+    while (itr2 != _market.end()) {
+        _market.erase(itr2);
+        itr2 = _market.begin();
+    }
+
+    auto itr3 = _portal.begin();
+    while (itr3 != _portal.end()) {
+        _portal.erase(itr3);
+        itr3 = _portal.begin();
+    }
+
+    auto itr4 = _portal.begin();
+    while (itr3 != _portal.end()) {
+        _portal.erase(itr3);
+        itr3 = _portal.begin();
+    }
+
+    vector<name> scopes;
+    // scopes.emplace_back("cryptobuffff"_n);
+    // scopes.emplace_back("eosdapplover"_n);
+    // scopes.emplace_back("knowncarried"_n);
+    // scopes.emplace_back("minakokojima"_n);
+    // scopes.emplace_back("tmonomonomon"_n);
+    // scopes.emplace_back("yinut1yinut2"_n);
+    for( const name &n : scopes) {
+        checkin_index checkins(_self, n.value);
+        auto itr5 = checkins.begin();
+        while (itr5 != checkins.end()) {
+            checkins.erase(itr5);
+            itr5 = checkins.begin();
+        }
+    }
+    
+    // scopes.emplace_back("lantallantal"_n);
+    // scopes.emplace_back("leonardcohen"_n);
+    // scopes.emplace_back("linklinkguan"_n);
+    // scopes.emplace_back("lovexuanxuan"_n);
+    // scopes.emplace_back("maomaoyaoyao"_n);
+    // scopes.emplace_back("nvshennvshen"_n);
+    // scopes.emplace_back("rukamoemoe51"_n);
+    // scopes.emplace_back("juanclaudia1"_n);
+    // scopes.emplace_back("junaidabbase"_n);
+    // scopes.emplace_back("laliteos1234"_n);
+    for( const name &n : scopes) {
+        singleton_players players(_self, n.value);
+        if ( players.exists() ) players.remove();
+        singleton_refunds refunds(_self, n.value);
+        if ( refunds.exists() ) refunds.remove();
+        singleton_voters voters(_self, n.value);
+        if ( voters.exists() ) voters.remove();
+    }
+    
    /*
    auto itr = _portal.find(9);
    
@@ -81,17 +140,8 @@ void cryptomeetup::clear() {
    */
 }
 
-void cryptomeetup::test() {
-    require_auth(_self);    
-}
-
-void cryptomeetup::checkin(name from, const checksum256 &hash) {
-    require_auth(_self);    
 
 
-    
-
-}
 
 void cryptomeetup::airdrop(name from, asset eos) {
     require_auth(_self);    

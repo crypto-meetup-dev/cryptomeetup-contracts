@@ -2,7 +2,32 @@
 #cleos -u http://api-direct.eosasia.one set account permission cryptomeetup active '{"threshold": 1,"keys": [{"key": "EOS5x2vQgnAfvn6571VUFu43xVHTWzoysuQ875npKacf7YJqDKF8H","weight": 1}],"accounts": [{"permission":{"actor":"cryptomeetup","permission":"eosio.code"},"weight":1}]}' owner -p cryptomeetup
 #cleos -u http://api-direct.eosasia.one get table dacincubator 222222dragon accounts
 
-cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
+cleos -u http://api.eosbeijing.one push action cryptomeetup clear '[]' -p cryptomeetup@active
+
+curl --request POST \
+  --url https://nodes.get-scatter.com:443/v1/chain/get_table_by_scope \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"code":"cryptomeetup","table":"checkins"}'
+
+curl --request POST \
+  --url https://nodes.get-scatter.com:443/v1/chain/get_table_by_scope \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"code":"cryptomeetup","table":"players"}'
+
+curl --request POST \
+  --url https://nodes.get-scatter.com:443/v1/chain/get_table_by_scope \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"code":"cryptomeetup","table":"refunds"}'
+
+curl --request POST \
+  --url https://nodes.get-scatter.com:443/v1/chain/get_table_by_scope \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"code":"cryptomeetup","table":"voters"}'
+
 /usr/local/eosio/bin/eosiocpp -g cryptomeetup/cryptomeetup.abi  cryptomeetup/cryptomeetup.cpp
 /usr/local/eosio/bin/eosiocpp -o cryptomeetup/cryptomeetup.wast cryptomeetup/cryptomeetup.cpp
 #cleos -u http://api.eosbeijing.one set contract cryptomeetup cryptomeetup -p cryptomeetup@owner

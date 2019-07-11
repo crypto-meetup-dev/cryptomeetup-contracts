@@ -1,9 +1,5 @@
 #include "council.hpp"
 
-void council::init() {
-    require_auth(_self);
-}
-
 void council::make_profit(uint64_t delta) {
     auto g = _global.get();
     g.earnings_per_share += MAGNITUDE * delta / g.total_staked.amount;

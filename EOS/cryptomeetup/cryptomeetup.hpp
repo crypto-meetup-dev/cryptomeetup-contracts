@@ -72,15 +72,14 @@ public:
     market_t _market;    
 
     typedef eosio::multi_index<"checkins"_n, checkin_info> checkin_index;
-
     
     ACTION init();
     ACTION clear();
-    ACTION test(); 
-
+    // ACTION test() { require_auth(_self); }
+    /*
     ACTION unstake(name from, asset delta) {
         council::unstake(from, delta);
-    }
+    } */
     ACTION claim(name from) {
         // eosio_assert(false, "not start yet.");
         council::claim(from);
@@ -134,7 +133,7 @@ public:
     ACTION newportal(name from, uint64_t id, uint64_t parent_id, uint64_t creator_fee, uint64_t ref_fee, uint64_t k, uint64_t price, uint64_t st);
     ACTION newland(name from, asset eos);
     ACTION airdrop(name to, asset eos);
-    ACTION checkin(name from, const checksum256 &hash);
+    // ACTION checkin(name from, const checksum256 &hash) { require_auth(_self); }
 
     ACTION transfer(name from, name to, asset quantity, string memo);    
     void onTransfer(name from, name to, extended_asset in, string memo); 
@@ -156,8 +155,6 @@ public:
             EOSIO_DISPATCH_HELPER(cryptomeetup, 
                 (init)
                 (clear)
-                (test)
-                (unstake)
                 (claim)
                 (refund)
                 (vote)
@@ -165,7 +162,6 @@ public:
                 (newland)
                 (newportal)
                 (airdrop)
-                (checkin)
             )
         }
     }

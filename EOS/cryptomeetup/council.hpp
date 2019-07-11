@@ -60,13 +60,13 @@ public:
         int64_t     unpaid;
     };  
 
-    typedef singleton<"global"_n, global_info> singleton_global;
+    typedef singleton<"global"_n, global_info> singleton_global_t;
     typedef singleton<"voters"_n, voter_info> singleton_voters;
     typedef singleton<"refunds"_n, refund_request> singleton_refunds;
     // typedef singleton<"proxies"_n, proxy_info> singleton_proxies;
     typedef singleton<"council"_n, council_info> singleton_council;
 
-    singleton_global _global;
+    singleton_global_t _global;
 
     uint64_t get_next_defer_id() {
         auto g = _global.get();    
@@ -211,7 +211,7 @@ public:
         _council.set(c, _self);     
     }
 
-    ACTION init();
+    // ACTION init() { require_auth(_self); }
     ACTION unstake(name from, asset delta);
     ACTION claim(name from);         
     ACTION refund(name from);    
