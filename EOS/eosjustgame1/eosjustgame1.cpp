@@ -3,7 +3,7 @@
  *  @copyright Andoromeda
  */
 
-#include "eosjustgame.hpp"
+#include "eosjustgame1.hpp"
 
 void eosjustgame1::init() {
     require_auth(_self);
