@@ -21,11 +21,8 @@ using eosio::permission_level;
 using eosio::action;
 
 namespace meetup {
-    
-    void create(account_name from, string& memo) {
+    void create(name from, string& memo) {
     }
-
-
 
     struct meetup {
         uint64_t id;
@@ -33,7 +30,7 @@ namespace meetup {
         uint64_t parent;       
         string name;
         string hyperlink;      
-        account_name owner;
+        name owner;
         time st, ed;        
         uint64_t primary_key()const { return id; }
     };
